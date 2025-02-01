@@ -24,3 +24,6 @@ yarn-error.log*
 
 # font file(ttf)
 *.ttf
+
+# environment file
+.env
