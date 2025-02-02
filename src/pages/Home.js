@@ -1,7 +1,11 @@
-// import { NotFoundPage } from '@components/Error/NotFound';
+import { HomePage } from '@components/Home';
 
 const Home = () => {
-  return <div></div>;
+  return (
+    <div>
+      <HomePage />
+    </div>
+  );
 };
 
 export default Home;
