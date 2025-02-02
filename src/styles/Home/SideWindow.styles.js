@@ -3,10 +3,9 @@ import palette from '@constants/styles';
 
 export const SideWindowContainer = styled.div`
   position: relative;
-  background: rgba(250, 250, 250, 1);
+  background: ${palette.white500};
   filter: drop-shadow(3px 0px 6px rgba(0, 0, 0, 0.161));
-
-  width: 500px;
+  width: 450px;
   height: 100%;
   display: flex;
   flex-wrap: nowrap;
@@ -16,58 +15,47 @@ export const SideWindowContainer = styled.div`
   z-index: 8;
 `;
 export const TopMenu = styled.div`
-  background-color: #fafafa;
-
+  background-color: ${palette.white500};
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-
   flex-shrink: 0;
-
   width: 100%;
   height: 50px;
   z-index: 9;
 `;
 
 export const TopButton = styled.button`
-  background-color: ${(props) => (props.isCheck ? '#eff8fe' : 'transparent')};
+  background-color: ${(props) => (props.isCheck ? palette.blue100 : 'transparent')};
   border: 0;
-  border-bottom: ${(props) => (props.isCheck ? '2px solid #0067a3' : '2px solid #cecece')};
-
+  border-bottom: ${(props) => (props.isCheck ? `2px solid ${palette.blue500}` : `2px solid ${palette.gray500}`)};
   width: 50%;
-
   text-align: center;
   font-size: 12px;
-  color: #767676;
-
+  color: ${palette.black500};
   cursor: pointer;
 `;
 
 export const LandInfoAddrText = styled.span`
   position: relative;
-  margin-top: ${(props) => (props.isMobile ? '280px' : '340px')};
+  margin-top: 340px;
   margin-bottom: 10px;
-
   text-align: center;
   font-family: 'SC Dream 6';
-  font-size: ${(props) => (props.isMobile ? '18px' : '20px')};
-  color: rgba(25, 25, 25, 1);
+  font-size: 20px;
+  color: ${palette.black500};
 `;
 
 export const MyPageBackButton = styled.button`
   position: absolute;
-  background-color: #fafafa;
+  background-color: ${palette.white500};
   filter: drop-shadow(0px 0px 6px rgba(0, 0, 0, 0.3));
-
   border: 0;
   border-radius: 10px;
-
   top: 12px;
   left: 12px;
-
   width: 36px;
   height: 36px;
   z-index: 20;
-
   cursor: pointer;
 `;

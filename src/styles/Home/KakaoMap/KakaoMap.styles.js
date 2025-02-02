@@ -3,7 +3,7 @@ import palette from '@constants/styles';
 
 export const MapContainer = styled.div`
   position: relative;
-  width: calc(100% - 500px);
+  width: calc(100% - 450px);
   min-width: 400px;
   height: 100%;
   z-index: 5;
@@ -12,7 +12,13 @@ export const MapContainer = styled.div`
 export const MapButton = styled.button`
   position: absolute;
   background: ${(props) =>
-    props.toggle ? (props.type === 'bid' ? '#ff7d7d' : props.type === 'sale' ? '#0067a3' : '#767676') : '#FAFAFA'};
+    props.toggle
+      ? props.type === 'bid'
+        ? palette.red500
+        : props.type === 'sale'
+          ? palette.blue500
+          : palette.gray500
+      : palette.white500};
   filter: drop-shadow(0px 0px 6px rgba(0, 0, 0, 0.3));
   border: 0;
   border-radius: 6px;
@@ -24,6 +30,6 @@ export const MapButton = styled.button`
   text-align: center;
   font-family: 'kumap-bold';
   font-size: 12px;
-  color: ${(props) => (props.toggle ? '#FAFAFA' : '#767676')};
+  color: ${(props) => (props.toggle ? palette.white500 : palette.gray700)};
   cursor: pointer;
 `;

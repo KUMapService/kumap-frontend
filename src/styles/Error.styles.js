@@ -7,7 +7,7 @@ export const Background = styled.div`
   height: 100vh;
   top: 0;
   left: 0;
-  background: ${palette.whiteM};
+  background: ${palette.white500};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,12 +17,12 @@ export const Background = styled.div`
 export const ErrorText = styled.h1`
   text-align: center;
   font-size: 32px;
-  color: ${palette.blueM};
+  color: ${palette.blue500};
 `;
 
 export const Content = styled.span`
   display: block;
   text-align: center;
   font-size: 15px;
-  color: ${palette.blackM};
+  color: ${palette.black500};
 `;

@@ -5,7 +5,6 @@ import React, { useState, useEffect } from 'react';
 import { BiCurrentLocation } from 'react-icons/bi';
 import { MdOutlineMap } from 'react-icons/md';
 import { MapContainer, MapButton } from '@styles/Home/KakaoMap/KakaoMap.styles';
-
 import '@styles/Home/KakaoMap/KakaoMap.css';
 
 const KakaoMap = () => {
