@@ -6,7 +6,7 @@ export const Container = styled.div`
   filter: drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.161));
   position: relative;
   width: calc(100vw - 10px);
-  min-width: 900px;
+  min-width: 890px;
   height: 55px;
   display: flex;
   margin: 0 auto;
@@ -47,6 +47,6 @@ export const ServiceTitleText = styled.div`
   margin-left: 54px;
   color: ${palette.blue500};
   font-size: 24px;
-  font-family: kumap-bold;
+  font-family: 'kumap-bold';
   text-align: center;
 `;

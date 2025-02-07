@@ -4,7 +4,6 @@ import palette from '@constants/styles';
 export const MapContainer = styled.div`
   position: relative;
   width: calc(100% - 450px);
-  min-width: 400px;
   height: 100%;
   z-index: 5;
 `;
