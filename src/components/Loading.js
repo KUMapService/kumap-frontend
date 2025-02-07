@@ -3,7 +3,7 @@ import { MoonLoader } from 'react-spinners';
 import palette from '@constants/styles';
 import * as Styled from '@styles/Loading.styles';
 
-export const LoadingPage = () => {
+export const Loading = () => {
   return (
     <Styled.Background>
       <MoonLoader color={palette.blue500} loading={true} size={100} />

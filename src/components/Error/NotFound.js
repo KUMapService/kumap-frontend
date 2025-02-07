@@ -1,7 +1,7 @@
 import React from 'react';
 import * as Styled from '@styles/Error.styles';
 
-export const NotFoundPage = () => {
+export const NotFound = () => {
   return (
     <Styled.Background>
       <Styled.ErrorText>404 Not Found</Styled.ErrorText>

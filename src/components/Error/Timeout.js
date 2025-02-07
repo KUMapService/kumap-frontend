@@ -1,7 +1,7 @@
 import React from 'react';
 import * as Styled from '@styles/Error.styles';
 
-export const TimeoutPage = () => {
+export const Timeout = () => {
   return (
     <Styled.Background>
       <Styled.ErrorText>서버가 일시적으로 중단되었습니다.</Styled.ErrorText>

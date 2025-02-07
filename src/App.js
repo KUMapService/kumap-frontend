@@ -1,10 +1,10 @@
 import { React, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { fetchServerStatus } from '@api/serverStatus';
-import Home from '@pages/Home';
-import Loading from '@pages/Loading';
-import NotFound from '@pages/NotFound';
-import Timeout from '@pages/Timeout';
+import HomePage from '@pages/Home';
+import LoadingPage from '@pages/Loading';
+import NotFoundPage from '@pages/NotFound';
+import TimeoutPage from '@pages/Timeout';
 
 import './App.css';
 
@@ -24,15 +24,15 @@ function App() {
 
   if (serverStatus === null) {
     // 비동기 요청이 아직 완료되지 않음 (로딩 페이지)
-    return <Loading />;
+    return <LoadingPage />;
   } else if (!serverStatus) {
-    return <Timeout />;
+    return <TimeoutPage />;
   } else {
     return (
       <Router>
         <Routes>
-          <Route exact path={'/'} Component={Home} />
-          <Route path={'*'} Component={NotFound} />
+          <Route exact path={'/'} Component={HomePage} />
+          <Route path={'*'} Component={NotFoundPage} />
         </Routes>
       </Router>
     );
