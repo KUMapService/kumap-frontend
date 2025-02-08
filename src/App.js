@@ -1,11 +1,11 @@
 import { React, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { fetchServerStatus } from '@api/serverStatus';
-import HomePage from '@pages/Home';
-import LoadingPage from '@pages/Loading';
-import NotFoundPage from '@pages/NotFound';
-import TimeoutPage from '@pages/Timeout';
-
+import HomePage from '@pages/HomePage';
+import LoadingPage from '@pages/LoadingPage';
+import NotFoundPage from '@pages/NotFoundPage';
+import TimeoutPage from '@pages/TimeoutPage';
+import LoginPage from '@pages/LoginPage';
 import './App.css';
 
 function App() {
@@ -32,6 +32,7 @@ function App() {
       <Router>
         <Routes>
           <Route exact path={'/'} Component={HomePage} />
+          <Route exact path={'/login'} Component={LoginPage} />
           <Route path={'*'} Component={NotFoundPage} />
         </Routes>
       </Router>
