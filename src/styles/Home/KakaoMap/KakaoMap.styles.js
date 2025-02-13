@@ -11,7 +11,7 @@ export const MapContainer = styled.div`
 export const MapButton = styled.button`
   position: absolute;
   background: ${(props) =>
-    props.toggle
+    props.istoggled === 'on'
       ? props.type === 'bid'
         ? palette.red500
         : props.type === 'sale'
@@ -29,6 +29,6 @@ export const MapButton = styled.button`
   text-align: center;
   font-family: 'kumap-bold';
   font-size: 12px;
-  color: ${(props) => (props.toggle ? palette.white500 : palette.gray700)};
+  color: ${(props) => (props.istoggled === 'on' ? palette.white500 : palette.gray700)};
   cursor: pointer;
 `;

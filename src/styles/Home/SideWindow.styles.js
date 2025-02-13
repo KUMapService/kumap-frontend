@@ -26,9 +26,10 @@ export const TopMenu = styled.div`
 `;
 
 export const TopButton = styled.button`
-  background-color: ${(props) => (props.isCheck ? palette.blue100 : 'transparent')};
+  background-color: ${(props) => (props.ischecked === 'true' ? palette.blue100 : 'transparent')};
   border: 0;
-  border-bottom: ${(props) => (props.isCheck ? `2px solid ${palette.blue500}` : `2px solid ${palette.gray500}`)};
+  border-bottom: ${(props) =>
+    props.ischecked === 'true' ? `2px solid ${palette.blue500}` : `2px solid ${palette.gray500}`};
   width: 50%;
   text-align: center;
   font-size: 12px;

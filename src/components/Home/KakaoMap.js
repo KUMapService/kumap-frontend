@@ -37,18 +37,32 @@ const KakaoMap = () => {
     setMap(newMap);
   };
 
+  const changeMapType = () => {
+    if (!map) {
+      return;
+    }
+
+    if (isSkyView) {
+      map.setMapTypeId(kakao.maps.MapTypeId.ROADMAP);
+      setSkyView(false);
+    } else {
+      map.setMapTypeId(kakao.maps.MapTypeId.SKYVIEW);
+      setSkyView(true);
+    }
+  };
+
   return (
     <MapContainer id="map">
       <MapButton number={1}>
         <BiCurrentLocation size="28" style={{ marginTop: '2px' }} />
       </MapButton>
-      <MapButton number={2} toggle={isSkyView} type="map">
+      <MapButton number={2} istoggled={isSkyView ? 'on' : 'off'} type="map" onClick={changeMapType}>
         <MdOutlineMap size="28" style={{ marginTop: '2px' }} />
       </MapButton>
-      <MapButton number={3} toggle={true} type="bid">
+      <MapButton number={3} istoggled={'on'} type="bid">
         경매
       </MapButton>
-      <MapButton number={4} toggle={true} type="sale">
+      <MapButton number={4} istoggled={'on'} type="sale">
         매물
       </MapButton>
     </MapContainer>
