@@ -1,25 +1,15 @@
-import { LuMenu } from 'react-icons/lu';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { NumberFormat } from '@utils/formatter';
 import * as Styled from '@styles/Home/SideBar.styles';
+import palette from '@constants/styles';
 
-function MyFavorite({ myFavoriteLandList = [] }) {
-  const NumberFormat = (number) => {
-    // 조 단위 포멧팅
-    if (Math.floor(number / 1000000000000) !== 0) {
-      return Math.floor(number / 1000000000000).toLocaleString('ko-KR') + '조';
-    }
-    // 억 단위 포멧팅
-    else if (Math.floor(number / 100000000) !== 0) {
-      return Math.floor(number / 100000000).toLocaleString('ko-KR') + '억';
-    }
-    // 만 단위 포멧팅
-    else if (Math.floor(number / 10000) !== 0) {
-      return Math.floor(number / 10000).toLocaleString('ko-KR') + '만';
-    }
-    // 그 외
-    else {
-      return Math.floor(number).toLocaleString('ko-KR');
-    }
-  };
+function MyFavorite({ setCurrentPage }) {
+  const isUserLogin = useSelector((state) => state.auth.isUserLogin);
+  const currentUser = useSelector((state) => state.auth.currentUser);
+
+  const [myFavoriteLandList, setMyFavoriteLandList] = useState([]);
+  const [refresh, setRefresh] = useState(true);
 
   const LandType = (land) => {
     if (land.bid_data !== null) {
@@ -31,19 +21,32 @@ function MyFavorite({ myFavoriteLandList = [] }) {
     }
   };
 
+  const LandLoad = (land) => {
+    console.log(land);
+  };
+
+  useEffect(() => {
+    if (isUserLogin) {
+      // TODO: 관심목록 받아오기
+      console.log(currentUser);
+      setMyFavoriteLandList([]);
+    }
+    setRefresh(false);
+  }, [isUserLogin, refresh]);
+
   return (
     <Styled.BottomPanel>
       <div style={{ display: 'flex' }}>
-        <Styled.BackButton onClick={() => setCurrPage('main')}></Styled.BackButton>
+        <Styled.BackButton onClick={() => setCurrentPage('main')}></Styled.BackButton>
         <Styled.CategoryText>나의 관심 목록</Styled.CategoryText>
         <Styled.RefreshButton onClick={() => setRefresh(true)} />
       </div>
       {myFavoriteLandList.length === 0 ? (
         <Styled.LandNavigateText>내 관심목록이 존재하지 않습니다.</Styled.LandNavigateText>
       ) : (
-        myFavoriteLandList.map((favorite, index) => {
+        myFavoriteLandList.map((favorite) => {
           return (
-            <Styled.LandNavigateButton onClick={() => LoadLand(favorite.lat, favorite.lng)}>
+            <Styled.LandNavigateButton onClick={() => LandLoad(favorite.lat, favorite.lng)}>
               [{LandType(favorite)}]<br />
               <Styled.LandNavigateText>
                 {favorite.addr}
@@ -53,13 +56,13 @@ function MyFavorite({ myFavoriteLandList = [] }) {
                 예측가: {NumberFormat(favorite.land_area * favorite.predict_land_price)}원
               </Styled.LandNavigateHighlightText>
               {LandType(favorite) === '경매' ? (
-                <Styled.LandNavigateHighlightText style={{ color: '#0067a3' }}>
+                <Styled.LandNavigateHighlightText style={{ color: palette.blue500 }}>
                   <br />
                   경매가: {NumberFormat(favorite.bid_data.case_info.minimum_sale_price)}원
                 </Styled.LandNavigateHighlightText>
               ) : (
                 LandType(favorite) === '매물' && (
-                  <Styled.LandNavigateHighlightText style={{ color: '#0067a3' }}>
+                  <Styled.LandNavigateHighlightText style={{ color: palette.blue500 }}>
                     <br />
                     매매가: {NumberFormat(favorite.sale_data.land_price)}원
                   </Styled.LandNavigateHighlightText>

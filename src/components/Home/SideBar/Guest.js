@@ -1,7 +1,9 @@
-import { LuMenu } from 'react-icons/lu';
+import { useNavigate } from 'react-router-dom';
 import * as Styled from '@styles/Home/SideBar.styles';
 
 function Guest() {
+  const navigate = useNavigate();
+
   return (
     <>
       <div style={{ display: 'flex', justifyContent: 'center' }}>

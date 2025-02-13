@@ -5,5 +5,6 @@ export const API = {
     DUP_CHECK: '/auth/dup-check',
     REGISTER: '/auth/register',
     RESET_PASSWORD: '/auth/reset-password',
+    VERIFY_TOKEN: '/auth/protected',
   },
 };

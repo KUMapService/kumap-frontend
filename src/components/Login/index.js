@@ -61,7 +61,9 @@ export const Login = () => {
     } else {
       try {
         const response = await fetchLogin({ email, password });
-        console.log(response);
+        localStorage.setItem('access_token', response.access_token);
+        localStorage.setItem('refresh_token', response.refresh_token);
+        navigate('/');
       } catch (error) {
         setErrorMessage(error.response.data.detail);
       }

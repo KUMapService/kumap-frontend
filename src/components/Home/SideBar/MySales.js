@@ -1,25 +1,15 @@
-import { LuMenu } from 'react-icons/lu';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { NumberFormat } from '@utils/formatter';
 import * as Styled from '@styles/Home/SideBar.styles';
+import palette from '@constants/styles';
 
-function MySales({ mySaleList = [] }) {
-  const NumberFormat = (number) => {
-    // 조 단위 포멧팅
-    if (Math.floor(number / 1000000000000) !== 0) {
-      return Math.floor(number / 1000000000000).toLocaleString('ko-KR') + '조';
-    }
-    // 억 단위 포멧팅
-    else if (Math.floor(number / 100000000) !== 0) {
-      return Math.floor(number / 100000000).toLocaleString('ko-KR') + '억';
-    }
-    // 만 단위 포멧팅
-    else if (Math.floor(number / 10000) !== 0) {
-      return Math.floor(number / 10000).toLocaleString('ko-KR') + '만';
-    }
-    // 그 외
-    else {
-      return Math.floor(number).toLocaleString('ko-KR');
-    }
-  };
+function MySales({ setCurrentPage }) {
+  const isUserLogin = useSelector((state) => state.auth.isUserLogin);
+  const currentUser = useSelector((state) => state.auth.currentUser);
+
+  const [mySaleList, setMySaleList] = useState([]);
+  const [refresh, setRefresh] = useState(true);
 
   const LandType = (land) => {
     if (land.bid_data !== null) {
@@ -31,19 +21,32 @@ function MySales({ mySaleList = [] }) {
     }
   };
 
+  const LandLoad = (land) => {
+    console.log(land);
+  };
+
+  useEffect(() => {
+    if (isUserLogin) {
+      // TODO: 관심목록 받아오기
+      console.log(currentUser);
+      setMySaleList([]);
+    }
+    setRefresh(false);
+  }, [isUserLogin, refresh]);
+
   return (
     <Styled.BottomPanel>
       <div style={{ display: 'flex' }}>
-        <Styled.BackButton onClick={() => setCurrPage('main')}></Styled.BackButton>
+        <Styled.BackButton onClick={() => setCurrentPage('main')}></Styled.BackButton>
         <Styled.CategoryText>나의 매물</Styled.CategoryText>
         <Styled.RefreshButton onClick={() => setRefresh(true)} />
       </div>
       {mySaleList.length === 0 ? (
         <Styled.LandNavigateText>내 매물이 존재하지 않습니다.</Styled.LandNavigateText>
       ) : (
-        mySaleList.map((mysale, index) => {
+        mySaleList.map((mysale) => {
           return (
-            <Styled.LandNavigateButton onClick={() => LoadLand(mysale.lat, mysale.lng)}>
+            <Styled.LandNavigateButton onClick={() => LandLoad(mysale.lat, mysale.lng)}>
               [{LandType(mysale)}]<br />
               <Styled.LandNavigateText>
                 {mysale.addr}
@@ -52,7 +55,7 @@ function MySales({ mySaleList = [] }) {
               <Styled.LandNavigateHighlightText>
                 예측가: {NumberFormat(mysale.land_area * mysale.predict_land_price)}원
               </Styled.LandNavigateHighlightText>
-              <Styled.LandNavigateHighlightText style={{ color: '#0067a3' }}>
+              <Styled.LandNavigateHighlightText style={{ color: palette.blue500 }}>
                 <br />
                 매매가: {NumberFormat(mysale.sale_data.land_price)}원
               </Styled.LandNavigateHighlightText>

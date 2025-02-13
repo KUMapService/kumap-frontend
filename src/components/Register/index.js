@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { fetchDupCheck } from 'api/auth';
+import { fetchDupCheck, fetchRegister } from 'api/auth';
+import * as Styled from '@styles/Register/Register.styles';
+import palette from '@constants/styles';
 
 export const Register = () => {
   const [name, setName] = useState('');
@@ -24,12 +26,12 @@ export const Register = () => {
   const [ageCheck, setAgeCheck] = useState('');
   const [useCheck, setUseCheck] = useState('');
   const [marketingCheck, setMarketingCheck] = useState('');
-  const [touModalOpen, setTOUModalOpen] = useState(false);
-  const [mcModalOpen, setMCModalOpen] = useState(false);
+  //const [touModalOpen, setTOUModalOpen] = useState(false);
+  //const [mcModalOpen, setMCModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const validateName = (name) => {
-    return name.toLowerCase().match(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|].{1,8}$/);
+    return name.toLowerCase().match(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|].{1,20}$/);
   };
 
   const validateEmail = (email) => {
@@ -49,7 +51,7 @@ export const Register = () => {
 
   const onChangeName = useCallback((e) => {
     const currentName = e.target.value;
-    setErrMsg('');
+    setErrorMessage('');
     setName(currentName);
   }, []);
 
@@ -71,7 +73,7 @@ export const Register = () => {
 
   const onChangePassword = useCallback((e) => {
     const currentPassword = e.target.value;
-    setErrMsg('');
+    setErrorMessage('');
     setPassword(currentPassword);
   }, []);
 
@@ -93,7 +95,7 @@ export const Register = () => {
         autoComplete: 'off',
       });
     }
-  }, [pwOpt]);
+  }, [showPassword]);
 
   // Caps Lock 체크 및 엔터 시 로그인
   const onKeyDownFunc = (e) => {
@@ -153,11 +155,11 @@ export const Register = () => {
   }, [ageCheck, useCheck, marketingCheck]);
 
   const handlerTOUModalClick = () => {
-    setTOUModalOpen(true);
+    //setTOUModalOpen(true);
   };
 
   const handlerMCModalClick = () => {
-    setMCModalOpen(true);
+    //setMCModalOpen(true);
   };
 
   const handlerNicknameDupCheck = useCallback(async () => {
@@ -166,10 +168,10 @@ export const Register = () => {
       setDupNicknameMessage('닉네임을 입력해주세요.');
     } else if (!isNicknameValid) {
       setIsDupNickname(true);
-      setDupNicknameMessage('닉네임을 1글자 이상 9글자 미만으로 입력해주세요.');
+      setDupNicknameMessage('닉네임을 1글자 이상 20글자 이하로 입력해주세요.');
     } else {
       try {
-        const response = await fetchDupCheck({ nickname: nickname });
+        await fetchDupCheck({ nickname: nickname });
         setIsDupNickname(false);
         setDupNicknameMessage('사용 가능한 닉네임입니다.');
       } catch (error) {
@@ -180,65 +182,151 @@ export const Register = () => {
   }, [nickname, isNicknameValid]);
 
   /// TODO
-  const handlerEmailDupCheck = useCallback(() => {
+  const handlerEmailDupCheck = useCallback(async () => {
     if (email === '') {
       setIsDupEmail(true);
-      setDupEmailMsg('이메일을 입력해주세요.');
+      setDupEmailMessage('이메일을 입력해주세요.');
     } else if (!isEmailValid) {
       setIsDupEmail(true);
-      setDupEmailMsg('이메일 형식이 올바르지 않습니다.');
+      setDupEmailMessage('이메일 형식이 올바르지 않습니다.');
     } else {
-      axios
-        .post(`${process.env.REACT_APP_API_URL}/dup_check`, {
-          email: email,
-        })
-        .then(function (response) {
-          setIsDupEmail(false);
-          setDupEmailMsg('사용 가능한 이메일입니다.');
-        })
-        .catch(function (error) {
-          if (error.response) {
-            setIsDupEmail(true);
-            setDupEmailMsg('사용 불가능한 이메일입니다.');
-          }
-        });
+      try {
+        await fetchDupCheck({ email: email });
+        setIsDupEmail(false);
+        setDupEmailMessage('사용 가능한 이메일입니다.');
+      } catch (error) {
+        setIsDupEmail(true);
+        setDupEmailMessage('사용 불가능한 이메일입니다.');
+      }
     }
   }, [email, isEmailValid]);
 
-  const handleRegister = useCallback(() => {
+  const handleRegister = useCallback(async () => {
     if (!isNameValid) {
-      setErrMsg('이름이 올바르지 않습니다.');
+      setErrorMessage('이름이 올바르지 않습니다.');
       return;
     } else if (isDupNickname) {
-      setErrMsg('닉네임 중복확인을 해주세요.');
+      setErrorMessage('닉네임 중복확인을 해주세요.');
       return;
     } else if (isDupEmail) {
-      setErrMsg('이메일 중복확인을 해주세요.');
+      setErrorMessage('이메일 중복확인을 해주세요.');
       return;
     } else if (!isPasswordValid) {
-      setErrMsg('비밀번호는 영문, 숫자, 특수기호 조합으로 10자리 이상 입력해주세요.');
+      setErrorMessage('비밀번호는 영문, 숫자, 특수기호 조합으로 10자리 이상 입력해주세요.');
     } else if (passwordCheck !== password) {
-      setErrMsg('입력하신 비밀번호가 일치하지 않습니다.');
+      setErrorMessage('입력하신 비밀번호가 일치하지 않습니다.');
     } else if (ageCheck !== true || useCheck !== true) {
-      setErrMsg('약관에 동의해주세요.');
+      setErrorMessage('약관에 동의해주세요.');
     } else {
       const confirmed = window.confirm('입력하신 정보로 회원가입 하시겠습니까?');
       if (confirmed) {
-        axios
-          .post(`${process.env.REACT_APP_API_URL}/register`, {
-            name: name,
-            nickname: nickname,
-            email: email,
-            password: password,
-          })
-          .then(function (response) {
-            alert('회원가입이 완료되었습니다.');
-          })
-          .catch(function (error) {
-            alert('회원가입 도중 문제가 발생했습니다. 다시 시도해주세요.');
-          });
+        try {
+          await fetchRegister({ name: name, nickname: nickname, email: email, password: password });
+          alert('회원가입이 완료되었습니다.');
+        } catch (error) {
+          alert('회원가입 도중 문제가 발생했습니다. 다시 시도해주세요.');
+        }
         navigate('/');
       }
     }
   }, [name, nickname, email, password, passwordCheck, isNameValid, isPasswordValid, ageCheck, useCheck, navigate]);
+
+  return (
+    <>
+      <Styled.Container>
+        <Styled.Template>
+          <Styled.MainText>일반회원 가입</Styled.MainText>
+          <Styled.ErrorMessage>{errorMessage}</Styled.ErrorMessage>
+          <Styled.InputBox
+            type="text"
+            name="name"
+            placeholder="이름"
+            onChange={onChangeName}
+            value={name}
+            onKeyDown={(e) => onKeyDownFunc(e)}
+            style={{ marginBottom: '5px' }}
+          />
+          <Styled.InputBox
+            type="text"
+            name="nickname"
+            placeholder="닉네임"
+            onChange={onChangeNickname}
+            value={nickname}
+            onKeyDown={(e) => onKeyDownFunc(e)}
+            style={{ paddingRight: '60px' }}
+          />
+          <Styled.DupCheckButton onClick={() => handlerNicknameDupCheck()}>중복 확인</Styled.DupCheckButton>
+          <Styled.ErrorMessage style={isDupNickname ? { color: palette.red500 } : { color: palette.blue500 }}>
+            {dupNicknameMessage}
+          </Styled.ErrorMessage>
+          <Styled.InputBox
+            type="text"
+            name="email"
+            placeholder="이메일"
+            onChange={onChangeEmail}
+            value={email}
+            onKeyDown={(e) => onKeyDownFunc(e)}
+            style={{ paddingRight: '60px' }}
+          />
+          <Styled.DupCheckButton onClick={() => handlerEmailDupCheck()}>중복 확인</Styled.DupCheckButton>
+          <Styled.ErrorMessage style={isDupEmail ? { color: palette.red500 } : { color: palette.blue500 }}>
+            {dupEmailMessage}
+          </Styled.ErrorMessage>
+          <Styled.PasswordInputBox
+            type={passwordInputType.type}
+            name="password"
+            placeholder="비밀번호"
+            onChange={onChangePassword}
+            value={password}
+            onKeyDown={(e) => onKeyDownFunc(e)}
+            autoComplete={passwordInputType.autoComplete}
+          />
+          <Styled.ShowPasswordButton onClick={() => setShowPassword(!showPassword)}>
+            {showPassword ? <FaEye /> : <FaEyeSlash />}
+          </Styled.ShowPasswordButton>
+          <Styled.ErrorMessage>{capsLockFlag && 'Caps Lock이 켜져 있습니다.'}</Styled.ErrorMessage>
+          <Styled.PasswordInputBox
+            type={passwordInputType.type}
+            name="password-check"
+            placeholder="비밀번호 확인"
+            onChange={onChangePasswordCheck}
+            value={passwordCheck}
+            onKeyDown={(e) => onKeyDownFunc(e)}
+            autoComplete={passwordInputType.autoComplete}
+          />
+          <Styled.TermsForm>
+            <Styled.TermsTitleText>약관에 동의해주세요.</Styled.TermsTitleText>
+            <hr></hr>
+            <div>
+              <div>
+                <input type="checkbox" id="all-check" checked={allCheck} onChange={allButtonEvent} />
+                <Styled.TermsCheckboxText for="all-check">전체동의</Styled.TermsCheckboxText>
+              </div>
+              <div>
+                <input type="checkbox" id="check1" checked={ageCheck} onChange={ageButtonEvent} />
+                <Styled.TermsCheckboxText for="check1">
+                  만 14세 이상입니다. <span>[필수]</span>
+                </Styled.TermsCheckboxText>
+              </div>
+              <div>
+                <input type="checkbox" id="check2" checked={useCheck} onChange={useButtonEvent} />
+                <Styled.TermsCheckboxText for="check2">
+                  이용약관 <span>[필수]</span>
+                  <Styled.TermSummaryButton onClick={handlerTOUModalClick}>내용 보기</Styled.TermSummaryButton>
+                </Styled.TermsCheckboxText>
+              </div>
+              <div>
+                <input type="checkbox" id="check3" checked={marketingCheck} onChange={marketingButtonEvent} />
+                <Styled.TermsCheckboxText for="check3">
+                  마케팅 동의 <span>[선택]</span>
+                  <Styled.TermSummaryButton onClick={handlerMCModalClick}>내용 보기</Styled.TermSummaryButton>
+                </Styled.TermsCheckboxText>
+              </div>
+            </div>
+          </Styled.TermsForm>
+          <Styled.RegisterButton onClick={handleRegister}>회원가입</Styled.RegisterButton>
+        </Styled.Template>
+      </Styled.Container>
+    </>
+  );
 };

@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { LuMenu } from 'react-icons/lu';
 import { IoCloseOutline } from 'react-icons/io5';
 import * as Styled from '@styles/Home/SideBar.styles';
@@ -9,34 +9,19 @@ import MyFavorite from './MyFavorite';
 import MySales from './MySales';
 
 function SideBar({ width = 320 }) {
-  const [isOpen, setOpen] = useState(false);
-  const [isHidden, setIsHidden] = useState(false);
+  const isUserLogin = useSelector((state) => state.auth.isUserLogin);
+  const currentUser = useSelector((state) => state.auth.currentUser);
   const [xPos, setX] = useState(0);
   const side = useRef();
-  const isUserLogin = true;
-  const currentUser = { user: 'test', email: 'test@test.com' };
   const [currentPage, setCurrentPage] = useState('main');
 
-  const navigate = useNavigate();
   const toggleMenu = () => {
     if (xPos < 0) {
       setX(0);
-      setOpen(false);
     } else {
       setX(-width);
-      setIsHidden(false);
-      setOpen(true);
     }
   };
-
-  useEffect(() => {
-    if (!isOpen) {
-      const timeout = setTimeout(() => {
-        setIsHidden(true);
-      }, 500); // 1초 지연
-      return () => clearTimeout(timeout);
-    }
-  }, [isOpen]);
 
   return (
     <Styled.Container>
@@ -71,14 +56,13 @@ function SideBar({ width = 320 }) {
               {currentPage === 'main' ? (
                 <User setCurrentPage={setCurrentPage} />
               ) : currentPage === 'my-favorite' ? (
-                <MyFavorite />
+                <MyFavorite setCurrentPage={setCurrentPage} />
               ) : (
-                <MySales />
+                <MySales setCurrentPage={setCurrentPage} />
               )}
             </>
           )}
         </>
-        aaa
       </Styled.Panel>
     </Styled.Container>
   );

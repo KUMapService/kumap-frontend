@@ -6,6 +6,7 @@ import LoadingPage from '@pages/LoadingPage';
 import NotFoundPage from '@pages/NotFoundPage';
 import TimeoutPage from '@pages/TimeoutPage';
 import LoginPage from '@pages/LoginPage';
+import RegisterPage from '@pages/RegisterPage';
 import './App.css';
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
         <Routes>
           <Route exact path={'/'} Component={HomePage} />
           <Route exact path={'/login'} Component={LoginPage} />
+          <Route exact path={'/register'} Component={RegisterPage} />
           <Route path={'*'} Component={NotFoundPage} />
         </Routes>
       </Router>

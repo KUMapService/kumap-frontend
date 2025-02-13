@@ -1,4 +1,3 @@
-import { LuMenu } from 'react-icons/lu';
 import * as Styled from '@styles/Home/SideBar.styles';
 
 function User({ setCurrentPage }) {
