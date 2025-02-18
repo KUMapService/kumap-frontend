@@ -7,6 +7,8 @@ import Guest from './Guest';
 import User from './User';
 import MyFavorite from './MyFavorite';
 import MySales from './MySales';
+import { useModal } from 'providers/ModalProvider';
+import { toast } from 'react-toastify';
 
 function SideBar({ width = 320 }) {
   const isUserLogin = useSelector((state) => state.auth.isUserLogin);
@@ -14,6 +16,7 @@ function SideBar({ width = 320 }) {
   const [xPos, setX] = useState(0);
   const side = useRef();
   const [currentPage, setCurrentPage] = useState('main');
+  const modal = useModal();
 
   const toggleMenu = () => {
     if (xPos < 0) {
@@ -21,6 +24,12 @@ function SideBar({ width = 320 }) {
     } else {
       setX(-width);
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('access_token');
+    toast.success('로그아웃되었습니다.');
+    window.location.replace('/');
   };
 
   return (
@@ -40,26 +49,26 @@ function SideBar({ width = 320 }) {
           ) : (
             <>
               <Styled.MiddlePanel>
-                <div style={{ display: 'flex' }}>
-                  <Styled.UserImage />
+                <div style={{ display: 'flex', width: '100%', marginTop: '6px' }}>
+                  <Styled.UserImage
+                    src={
+                      process.env.REACT_APP_API_URL + (currentUser.image !== '' ? currentUser.image : '/user/images')
+                    }
+                  />
                   <div>
-                    <Styled.UserNameText>{currentUser?.user}</Styled.UserNameText>
+                    <Styled.UserNameText>{currentUser?.nickname}</Styled.UserNameText>
                     <Styled.UserEmailText>{currentUser?.email}</Styled.UserEmailText>
                     <br />
                   </div>
                 </div>
-                <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-around' }}>
-                  <Styled.TextButton>회원정보 수정</Styled.TextButton>
-                  <Styled.TextButton>로그아웃</Styled.TextButton>
+                <div style={{ width: '80%', marginTop: '10px', display: 'flex', justifyContent: 'space-around' }}>
+                  <Styled.TextButton onClick={() => modal.modifyUserInfo()}>회원정보 수정</Styled.TextButton>
+                  <Styled.TextButton onClick={handleLogout}>로그아웃</Styled.TextButton>
                 </div>
               </Styled.MiddlePanel>
-              {currentPage === 'main' ? (
-                <User setCurrentPage={setCurrentPage} />
-              ) : currentPage === 'my-favorite' ? (
-                <MyFavorite setCurrentPage={setCurrentPage} />
-              ) : (
-                <MySales setCurrentPage={setCurrentPage} />
-              )}
+              {currentPage === 'main' && <User setCurrentPage={setCurrentPage} />}
+              {currentPage === 'myFavorite' && <MyFavorite setCurrentPage={setCurrentPage} />}
+              {currentPage === 'mySales' && <MySales setCurrentPage={setCurrentPage} />}
             </>
           )}
         </>
