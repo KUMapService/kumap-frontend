@@ -53,11 +53,8 @@ authInstance.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
         return authInstance(originalRequest);
       } catch (refreshError) {
-        console.error('Token refresh failed:', refreshError);
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-        window.location.href = '/login'; // 로그인 페이지로 이동
-        return Promise.reject(refreshError);
       }
     }
 
