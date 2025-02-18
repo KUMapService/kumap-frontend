@@ -1,12 +1,15 @@
 import { React, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Flip } from 'react-toastify';
 import { fetchServerStatus } from '@api/serverStatus';
 import HomePage from '@pages/HomePage';
 import LoadingPage from '@pages/LoadingPage';
-import NotFoundPage from '@pages/NotFoundPage';
-import TimeoutPage from '@pages/TimeoutPage';
 import LoginPage from '@pages/LoginPage';
+import NotFoundPage from '@pages/NotFoundPage';
 import RegisterPage from '@pages/RegisterPage';
+import TimeoutPage from '@pages/TimeoutPage';
+import { ModalProvider } from '@providers/ModalProvider';
+import { StyledToastContainer } from '@styles/Toast.styles';
 import './App.css';
 
 function App() {
@@ -24,20 +27,32 @@ function App() {
   }, []);
 
   if (serverStatus === null) {
-    // 비동기 요청이 아직 완료되지 않음 (로딩 페이지)
     return <LoadingPage />;
   } else if (!serverStatus) {
     return <TimeoutPage />;
   } else {
     return (
-      <Router>
-        <Routes>
-          <Route exact path={'/'} Component={HomePage} />
-          <Route exact path={'/login'} Component={LoginPage} />
-          <Route exact path={'/register'} Component={RegisterPage} />
-          <Route path={'*'} Component={NotFoundPage} />
-        </Routes>
-      </Router>
+      <>
+        <StyledToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          closeOnClick
+          pauseOnFocusLoss
+          pauseOnHover
+          transition={Flip}
+        />
+        <ModalProvider>
+          <Router>
+            <Routes>
+              <Route exact path={'/'} Component={HomePage} />
+              <Route exact path={'/login'} Component={LoginPage} />
+              <Route exact path={'/register'} Component={RegisterPage} />
+              <Route path={'*'} Component={NotFoundPage} />
+            </Routes>
+          </Router>
+        </ModalProvider>
+      </>
     );
   }
 }
