@@ -9,6 +9,7 @@
       "@constants/*": ["./src/constants/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@pages/*": ["./src/pages/*"],
+      "@providers/*": ["src/providers/*"],
       "@store/*": ["./src/store/*"],
       "@styles/*": ["./src/styles/*"],
       "@utils/*": ["./src/utils/*"]
