@@ -1,9 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { fetchDupCheck, fetchRegister } from 'api/auth';
-import * as Styled from '@styles/Register/Register.styles';
-import palette from '@constants/styles';
+import { fetchDupCheck, fetchRegister } from '@api/auth';
+import * as Styled from '@styles/Register.styles';
+// import palette from '@constants/styles';
+import { validateName, validateEmail, validatePassword } from '@utils/validators';
+import { toast } from 'react-toastify';
+import { validateNickname } from 'utils/validators';
 
 export const Register = () => {
   const [name, setName] = useState('');
@@ -11,78 +14,116 @@ export const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isDupNickname, setIsDupNickname] = useState(true);
-  const [dupNicknameMessage, setDupNicknameMessage] = useState('');
-  const [isDupEmail, setIsDupEmail] = useState(true);
-  const [dupEmailMessage, setDupEmailMessage] = useState('');
+  const [confirmedNickname, setConfirmedNickname] = useState('');
+  const [isNicknameButtonDisabled, setIsNicknameButtonDisabled] = useState(true);
+  const [confirmedEmail, setConfirmedEmail] = useState('');
+  const [isEmailButtonDisabled, setIsEmailButtonDisabled] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [passwordInputType, setPasswordInputType] = useState({
     type: 'password',
     autoComplete: 'current-password',
   });
-  const [capsLockFlag, setCapsLockFlag] = useState(false);
   const [allCheck, setAllCheck] = useState('');
   const [ageCheck, setAgeCheck] = useState('');
   const [useCheck, setUseCheck] = useState('');
   const [marketingCheck, setMarketingCheck] = useState('');
   //const [touModalOpen, setTOUModalOpen] = useState(false);
   //const [mcModalOpen, setMCModalOpen] = useState(false);
+
+  // error message
+  const [errorMessage, setErrorMessage] = useState({
+    name: '',
+    nickname: '',
+    email: '',
+    password: '',
+  });
+
   const navigate = useNavigate();
 
-  const validateName = (name) => {
-    return name.toLowerCase().match(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|].{1,20}$/);
-  };
-
-  const validateEmail = (email) => {
-    return email
-      .toLowerCase()
-      .match(/([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/);
-  };
-
-  const validatePassword = (password) => {
-    return password.toLowerCase().match(/^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{10,25}$/);
-  };
-
+  // check validate
   const isNameValid = validateName(name);
-  const isNicknameValid = validateName(nickname);
+  const isNicknameValid = validateNickname(nickname);
   const isEmailValid = validateEmail(email);
   const isPasswordValid = validatePassword(password);
 
+  // on change
   const onChangeName = useCallback((e) => {
     const currentName = e.target.value;
-    setErrorMessage('');
+    if (!validateName(currentName)) {
+      setErrorMessage((prev) => ({
+        ...prev,
+        name: '이름 형식이 잘못되었습니다.',
+      }));
+    } else {
+      setErrorMessage((prev) => ({
+        ...prev,
+        name: '',
+      }));
+    }
     setName(currentName);
   }, []);
-
   const onChangeNickname = useCallback((e) => {
     const currentNickname = e.target.value;
-    setErrorMessage('');
-    setIsDupNickname(true);
-    setDupNicknameMessage('');
+    if (!validateNickname(currentNickname)) {
+      setIsNicknameButtonDisabled(true);
+      setErrorMessage((prev) => ({
+        ...prev,
+        nickname: '닉네임은 한글, 영문, 숫자 12자까지 입력 가능합니다.',
+      }));
+    } else {
+      if (confirmedNickname === currentNickname) {
+        setIsNicknameButtonDisabled(true);
+      } else {
+        setIsNicknameButtonDisabled(false);
+      }
+      setErrorMessage((prev) => ({
+        ...prev,
+        nickname: '',
+      }));
+    }
     setNickname(currentNickname);
   }, []);
-
   const onChangeEmail = useCallback(async (e) => {
     const currentEmail = e.target.value;
-    setErrorMessage('');
-    setIsDupEmail(true);
-    setDupEmailMessage('');
+    if (!validateEmail(currentEmail)) {
+      setIsEmailButtonDisabled(true);
+      setErrorMessage((prev) => ({
+        ...prev,
+        email: '올바른 이메일을 입력해주세요.',
+      }));
+    } else {
+      if (confirmedEmail === currentEmail) {
+        setIsEmailButtonDisabled(true);
+      } else {
+        setIsEmailButtonDisabled(false);
+      }
+      setErrorMessage((prev) => ({
+        ...prev,
+        email: '',
+      }));
+    }
     setEmail(currentEmail);
   }, []);
-
   const onChangePassword = useCallback((e) => {
     const currentPassword = e.target.value;
-    setErrorMessage('');
+    if (!validatePassword(currentPassword)) {
+      setErrorMessage((prev) => ({
+        ...prev,
+        password: "영문, 숫자, 특수문자를 조합하여 8자 이상으로 설정해 주세요. (<>()'#/\\는 사용불가)",
+      }));
+    } else {
+      setErrorMessage((prev) => ({
+        ...prev,
+        password: '',
+      }));
+    }
     setPassword(currentPassword);
   }, []);
-
   const onChangePasswordCheck = useCallback((e) => {
     const currentPasswordCheck = e.target.value;
-    setErrorMessage('');
     setPasswordCheck(currentPasswordCheck);
   }, []);
-  // 비밀번호 보이기
+
   useEffect(() => {
     if (showPassword === false) {
       setPasswordInputType({
@@ -97,16 +138,13 @@ export const Register = () => {
     }
   }, [showPassword]);
 
-  // Caps Lock 체크 및 엔터 시 로그인
   const onKeyDownFunc = (e) => {
-    let capsLock = e.getModifierState('CapsLock');
-    setCapsLockFlag(capsLock);
     if (e.key == 'Enter') {
       handleRegister();
     }
   };
 
-  // 전체동의 체크박스 이벤트
+  // check box
   const allButtonEvent = () => {
     if (allCheck === false) {
       setAllCheck(true);
@@ -120,8 +158,6 @@ export const Register = () => {
       setMarketingCheck(false);
     }
   };
-
-  // 만 14세 이상입니다 체크박스 이벤트
   const ageButtonEvent = () => {
     if (ageCheck === false) {
       setAgeCheck(true);
@@ -129,7 +165,6 @@ export const Register = () => {
       setAgeCheck(false);
     }
   };
-
   const useButtonEvent = () => {
     if (useCheck === false) {
       setUseCheck(true);
@@ -137,7 +172,6 @@ export const Register = () => {
       setUseCheck(false);
     }
   };
-
   const marketingButtonEvent = () => {
     if (marketingCheck === false) {
       setMarketingCheck(true);
@@ -145,7 +179,6 @@ export const Register = () => {
       setMarketingCheck(false);
     }
   };
-
   useEffect(() => {
     if (ageCheck === true && useCheck === true && marketingCheck === true) {
       setAllCheck(true);
@@ -154,6 +187,7 @@ export const Register = () => {
     }
   }, [ageCheck, useCheck, marketingCheck]);
 
+  // handler
   const handlerTOUModalClick = () => {
     //setTOUModalOpen(true);
   };
@@ -162,69 +196,56 @@ export const Register = () => {
     //setMCModalOpen(true);
   };
 
-  const handlerNicknameDupCheck = useCallback(async () => {
-    if (nickname === '') {
-      setIsDupNickname(true);
-      setDupNicknameMessage('닉네임을 입력해주세요.');
-    } else if (!isNicknameValid) {
-      setIsDupNickname(true);
-      setDupNicknameMessage('닉네임을 1글자 이상 20글자 이하로 입력해주세요.');
-    } else {
-      try {
-        await fetchDupCheck({ nickname: nickname });
-        setIsDupNickname(false);
-        setDupNicknameMessage('사용 가능한 닉네임입니다.');
-      } catch (error) {
-        setIsDupNickname(true);
-        setDupNicknameMessage('사용 불가능한 닉네임입니다.');
-      }
+  const handlerNicknameDuplicateCheck = useCallback(async () => {
+    try {
+      const response = await fetchDupCheck({ nickname: nickname });
+      toast.success(response.message);
+      setConfirmedNickname(nickname);
+      setIsNicknameButtonDisabled(true);
+    } catch (error) {
+      toast.error(error.message);
+      setIsNicknameButtonDisabled(false);
     }
   }, [nickname, isNicknameValid]);
-
-  /// TODO
-  const handlerEmailDupCheck = useCallback(async () => {
-    if (email === '') {
-      setIsDupEmail(true);
-      setDupEmailMessage('이메일을 입력해주세요.');
-    } else if (!isEmailValid) {
-      setIsDupEmail(true);
-      setDupEmailMessage('이메일 형식이 올바르지 않습니다.');
-    } else {
-      try {
-        await fetchDupCheck({ email: email });
-        setIsDupEmail(false);
-        setDupEmailMessage('사용 가능한 이메일입니다.');
-      } catch (error) {
-        setIsDupEmail(true);
-        setDupEmailMessage('사용 불가능한 이메일입니다.');
-      }
+  const handlerEmailDuplicateCheck = useCallback(async () => {
+    try {
+      const response = await fetchDupCheck({ email: email });
+      toast.success(response.message);
+      setConfirmedEmail(email);
+      setIsEmailButtonDisabled(true);
+    } catch (error) {
+      toast.error(error.message);
+      setIsEmailButtonDisabled(false);
     }
   }, [email, isEmailValid]);
 
   const handleRegister = useCallback(async () => {
-    if (!isNameValid) {
-      setErrorMessage('이름이 올바르지 않습니다.');
+    if (name === '') {
+      toast.error('이름을 입력해주세요.');
       return;
-    } else if (isDupNickname) {
-      setErrorMessage('닉네임 중복확인을 해주세요.');
+    } else if (!isNameValid) {
+      toast.error('이름이 올바르지 않습니다.');
       return;
-    } else if (isDupEmail) {
-      setErrorMessage('이메일 중복확인을 해주세요.');
+    } else if (!isNicknameButtonDisabled || confirmedNickname === '') {
+      toast.error('닉네임 중복확인을 해주세요.');
+      return;
+    } else if (!isEmailButtonDisabled || confirmedEmail === '') {
+      toast.error('이메일 중복확인을 해주세요.');
       return;
     } else if (!isPasswordValid) {
-      setErrorMessage('비밀번호는 영문, 숫자, 특수기호 조합으로 10자리 이상 입력해주세요.');
+      toast.error('비밀번호를 양식에 맞게 작성해주세요.');
     } else if (passwordCheck !== password) {
-      setErrorMessage('입력하신 비밀번호가 일치하지 않습니다.');
+      toast.error('입력하신 비밀번호가 일치하지 않습니다.');
     } else if (ageCheck !== true || useCheck !== true) {
-      setErrorMessage('약관에 동의해주세요.');
+      toast.error('약관에 동의해주세요.');
     } else {
       const confirmed = window.confirm('입력하신 정보로 회원가입 하시겠습니까?');
       if (confirmed) {
         try {
           await fetchRegister({ name: name, nickname: nickname, email: email, password: password });
-          alert('회원가입이 완료되었습니다.');
+          toast.success('회원가입이 완료되었습니다.');
         } catch (error) {
-          alert('회원가입 도중 문제가 발생했습니다. 다시 시도해주세요.');
+          toast.error('회원가입 도중 문제가 발생했습니다. 다시 시도해주세요.');
         }
         navigate('/');
       }
@@ -234,9 +255,10 @@ export const Register = () => {
   return (
     <>
       <Styled.Container>
+        <Styled.Header>KUMap</Styled.Header>
         <Styled.Template>
           <Styled.MainText>일반회원 가입</Styled.MainText>
-          <Styled.ErrorMessage>{errorMessage}</Styled.ErrorMessage>
+
           <Styled.InputBox
             type="text"
             name="name"
@@ -244,47 +266,56 @@ export const Register = () => {
             onChange={onChangeName}
             value={name}
             onKeyDown={(e) => onKeyDownFunc(e)}
-            style={{ marginBottom: '5px' }}
           />
-          <Styled.InputBox
-            type="text"
-            name="nickname"
-            placeholder="닉네임"
-            onChange={onChangeNickname}
-            value={nickname}
-            onKeyDown={(e) => onKeyDownFunc(e)}
-            style={{ paddingRight: '60px' }}
-          />
-          <Styled.DupCheckButton onClick={() => handlerNicknameDupCheck()}>중복 확인</Styled.DupCheckButton>
-          <Styled.ErrorMessage style={isDupNickname ? { color: palette.red500 } : { color: palette.blue500 }}>
-            {dupNicknameMessage}
-          </Styled.ErrorMessage>
-          <Styled.InputBox
-            type="text"
-            name="email"
-            placeholder="이메일"
-            onChange={onChangeEmail}
-            value={email}
-            onKeyDown={(e) => onKeyDownFunc(e)}
-            style={{ paddingRight: '60px' }}
-          />
-          <Styled.DupCheckButton onClick={() => handlerEmailDupCheck()}>중복 확인</Styled.DupCheckButton>
-          <Styled.ErrorMessage style={isDupEmail ? { color: palette.red500 } : { color: palette.blue500 }}>
-            {dupEmailMessage}
-          </Styled.ErrorMessage>
-          <Styled.PasswordInputBox
-            type={passwordInputType.type}
-            name="password"
-            placeholder="비밀번호"
-            onChange={onChangePassword}
-            value={password}
-            onKeyDown={(e) => onKeyDownFunc(e)}
-            autoComplete={passwordInputType.autoComplete}
-          />
-          <Styled.ShowPasswordButton onClick={() => setShowPassword(!showPassword)}>
-            {showPassword ? <FaEye /> : <FaEyeSlash />}
-          </Styled.ShowPasswordButton>
-          <Styled.ErrorMessage>{capsLockFlag && 'Caps Lock이 켜져 있습니다.'}</Styled.ErrorMessage>
+          <Styled.ErrorMessage>{errorMessage.name}</Styled.ErrorMessage>
+
+          <Styled.InputRow>
+            <Styled.InputBox
+              type="text"
+              name="nickname"
+              placeholder="닉네임"
+              onChange={onChangeNickname}
+              value={nickname}
+              onKeyDown={(e) => onKeyDownFunc(e)}
+            />
+            <Styled.ConfirmButton onClick={() => handlerNicknameDuplicateCheck()} disabled={isNicknameButtonDisabled}>
+              중복확인
+            </Styled.ConfirmButton>
+          </Styled.InputRow>
+          <Styled.ErrorMessage>{errorMessage.nickname}</Styled.ErrorMessage>
+
+          <Styled.InputRow>
+            <Styled.InputBox
+              type="text"
+              name="email"
+              placeholder="이메일"
+              onChange={onChangeEmail}
+              value={email}
+              onKeyDown={(e) => onKeyDownFunc(e)}
+              style={{ paddingRight: '60px' }}
+            />
+            <Styled.ConfirmButton onClick={() => handlerEmailDuplicateCheck()} disabled={isEmailButtonDisabled}>
+              중복확인
+            </Styled.ConfirmButton>
+          </Styled.InputRow>
+          <Styled.ErrorMessage>{errorMessage.email}</Styled.ErrorMessage>
+
+          <Styled.InputRow>
+            <Styled.PasswordInputBox
+              type={passwordInputType.type}
+              name="password"
+              placeholder="비밀번호"
+              onChange={onChangePassword}
+              value={password}
+              onKeyDown={(e) => onKeyDownFunc(e)}
+              autoComplete={passwordInputType.autoComplete}
+            />
+            <Styled.ShowPasswordButton onClick={() => setShowPassword(!showPassword)}>
+              {showPassword ? <FaEye size={20} /> : <FaEyeSlash size={20} />}
+            </Styled.ShowPasswordButton>
+          </Styled.InputRow>
+          <Styled.ErrorMessage>{errorMessage.password}</Styled.ErrorMessage>
+
           <Styled.PasswordInputBox
             type={passwordInputType.type}
             name="password-check"
@@ -294,6 +325,7 @@ export const Register = () => {
             onKeyDown={(e) => onKeyDownFunc(e)}
             autoComplete={passwordInputType.autoComplete}
           />
+
           <Styled.TermsForm>
             <Styled.TermsTitleText>약관에 동의해주세요.</Styled.TermsTitleText>
             <hr></hr>

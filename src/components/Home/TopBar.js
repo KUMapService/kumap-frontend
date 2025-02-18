@@ -20,7 +20,7 @@ const TopBar = () => {
           onChange={(e) => setAddrSearch(e.target.value)}
           placeholder="지번 검색"
         />
-        <FaSearch size={30} color={palette.gray500} style={{ marginLeft: '-32px' }} />
+        <FaSearch size={25} color={palette.gray500} style={{ marginLeft: '-32px' }} />
       </Styled.AddressSearchBarContainer>
     </Styled.Container>
   );

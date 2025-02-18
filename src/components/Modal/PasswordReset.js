@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import PropTypes from 'prop-types';
 import { IoClose } from 'react-icons/io5';
 import { fetchResetPassword } from '@api/auth';
-import * as Styled from '@styles/Login/PasswordResetModal.styles';
+import * as Styled from '@styles/Modal/PasswordReset.styles';
 
-export const PasswordResetModal = ({ className, onClose, visible }) => {
+const PasswordReset = ({ className, close }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [email, setEmail] = useState('');
   const onChangeEmail = useCallback(async (e) => {
@@ -35,13 +34,13 @@ export const PasswordResetModal = ({ className, onClose, visible }) => {
   };
 
   const handleClose = () => {
-    onClose?.();
+    close?.();
   };
 
   return (
     <>
-      <Styled.Overlay visible={visible} />
-      <Styled.Wrapper className={className} tapIndex="-1" visible={visible}>
+      <Styled.Overlay />
+      <Styled.Wrapper className={className} tabIndex="-1">
         <Styled.Inner tapIndex="0" className="modal-inner">
           <Styled.MainText>비밀번호 재설정</Styled.MainText>
           <Styled.CloseButton onClick={handleClose}>
@@ -56,6 +55,4 @@ export const PasswordResetModal = ({ className, onClose, visible }) => {
   );
 };
 
-PasswordResetModal.propTypes = {
-  visible: PropTypes.bool,
-};
+export default PasswordReset;
