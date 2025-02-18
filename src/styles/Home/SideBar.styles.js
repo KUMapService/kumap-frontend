@@ -40,6 +40,9 @@ export const TopPanel = styled.div`
 `;
 
 export const MiddlePanel = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: relative;
   filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.051));
   background-color: ${palette.white300};
@@ -162,13 +165,12 @@ export const UserImage = styled.img`
   background-color: ${palette.gray500};
   width: 64px;
   height: 64px;
-
   margin: 20px;
   margin-bottom: 10px;
 `;
 
 export const UserNameText = styled.h2`
-  margin-top: 28px;
+  margin-top: 32px;
   margin-bottom: 0px;
   text-align: left;
   text-decoration: none;
@@ -177,7 +179,8 @@ export const UserNameText = styled.h2`
   color: ${palette.black500};
 `;
 
-export const UserEmailText = styled.span`
+export const UserEmailText = styled.div`
+  margin-top: 4px;
   text-align: left;
   text-decoration: none;
   font-size: 12px;

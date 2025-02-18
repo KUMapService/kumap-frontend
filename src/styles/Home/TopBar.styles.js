@@ -26,7 +26,7 @@ export const AddressSearchBarContainer = styled.div`
 
 export const AddressSearchBar = styled.input`
   background: ${palette.gray300};
-  width: 400px;
+  width: 390px;
   height: 36px;
   border: none;
   border-radius: 6px;
@@ -35,10 +35,10 @@ export const AddressSearchBar = styled.input`
   font-size: 15px;
   color: ${palette.gray500};
   outline: none;
+  transition: border-color 0.3s ease-in-out;
 
   &:focus {
     border: 2px solid ${palette.blue500};
-    box-shadow: 0 0 4px ${palette.blue300};
   }
 `;
 
