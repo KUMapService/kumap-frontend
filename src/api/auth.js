@@ -1,6 +1,7 @@
 import { instance } from '@api/axios';
 import { API } from '@constants/route';
 import { setCurrentUser, setIsUserLogin } from '@store/actions/auth';
+import { authInstance } from './axios';
 
 export const fetchLogin = async ({ email, password }) => {
   const { data, status } = await instance.post(API.AUTH.LOGIN, {
@@ -36,27 +37,21 @@ export const fetchRegister = async ({ name, nickname, email, password }) => {
 };
 
 export const verifyToken = async (dispatch) => {
-  const accessToken = localStorage.getItem('access_token');
-  if (!accessToken) {
-    throw new Error('No access token found');
-  }
-
   try {
-    const { data } = await instance.get(API.AUTH.VERIFY_TOKEN, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const { data } = await authInstance.get(API.AUTH.VERIFY_TOKEN);
+
     dispatch(
       setCurrentUser({
-        user: data.user,
         name: data.name,
+        nickname: data.nickname,
         email: data.email,
+        phone: data.phone,
+        image: data.image,
       }),
     );
     dispatch(setIsUserLogin(true));
   } catch (error) {
     dispatch(setIsUserLogin(false));
-    throw new Error(error.response?.data?.message || 'Token verification failed');
+    throw new Error(error.message);
   }
 };
