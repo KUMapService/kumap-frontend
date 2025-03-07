@@ -6,7 +6,7 @@ import HomePage from '@pages/HomePage';
 import LoadingPage from '@pages/LoadingPage';
 import LoginPage from '@pages/LoginPage';
 import NotFoundPage from '@pages/NotFoundPage';
-import RegisterPage from '@pages/RegisterPage';
+import SignUpPage from '@pages/SignUpPage';
 import TimeoutPage from '@pages/TimeoutPage';
 import { ModalProvider } from '@providers/ModalProvider';
 import { StyledToastContainer } from '@styles/Toast.styles';
@@ -47,7 +47,7 @@ function App() {
             <Routes>
               <Route exact path={'/'} Component={HomePage} />
               <Route exact path={'/login'} Component={LoginPage} />
-              <Route exact path={'/register'} Component={RegisterPage} />
+              <Route exact path={'/sign-up'} Component={SignUpPage} />
               <Route path={'*'} Component={NotFoundPage} />
             </Routes>
           </Router>
