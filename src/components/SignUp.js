@@ -1,14 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { fetchDupCheck, fetchRegister } from '@api/auth';
-import * as Styled from '@styles/Register.styles';
-// import palette from '@constants/styles';
-import { validateName, validateEmail, validatePassword } from '@utils/validators';
-import { toast } from 'react-toastify';
-import { validateNickname } from 'utils/validators';
+import * as Styled from '@styles/SignUp.styles';
+import { validateName, validateNickname, validateEmail, validatePassword } from '@utils/validators';
 
-export const Register = () => {
+export const SignUp = () => {
   const [name, setName] = useState('');
   const [nickname, setNickname] = useState('');
   const [email, setEmail] = useState('');
