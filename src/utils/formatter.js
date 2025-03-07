@@ -1,4 +1,7 @@
-export const NumberFormat = (number) => {
+export const numberFormat = (number) => {
+  if (!number) {
+    return '없음';
+  }
   // 조 단위 포멧팅
   if (Math.floor(number / 1000000000000) !== 0) {
     return Math.floor(number / 1000000000000).toLocaleString('ko-KR') + '조';

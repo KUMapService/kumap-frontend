@@ -14,6 +14,7 @@ export const SideWindowContainer = styled.div`
   justify-content: flex-start;
   z-index: 8;
 `;
+
 export const TopMenu = styled.div`
   background-color: ${palette.white500};
   display: flex;
@@ -25,26 +26,23 @@ export const TopMenu = styled.div`
   z-index: 9;
 `;
 
-export const TopButton = styled.button`
-  background-color: ${(props) => (props.ischecked === 'true' ? palette.blue100 : 'transparent')};
+export const TopButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== 'isChecked',
+})`
+  background-color: ${(props) => (props.isChecked ? palette.blue100 : 'transparent')};
   border: 0;
-  border-bottom: ${(props) =>
-    props.ischecked === 'true' ? `2px solid ${palette.blue500}` : `2px solid ${palette.gray500}`};
+  border-bottom: ${(props) => (props.isChecked ? `2px solid ${palette.blue500}` : `2px solid ${palette.gray500}`)};
   width: 50%;
   text-align: center;
   font-size: 12px;
   color: ${palette.black500};
-  cursor: pointer;
-`;
+  transition: background-color 0.3s ease-in-out;
 
-export const LandInfoAddrText = styled.span`
-  position: relative;
-  margin-top: 340px;
-  margin-bottom: 10px;
-  text-align: center;
-  font-family: 'SC Dream 6';
-  font-size: 20px;
-  color: ${palette.black500};
+  &:hover {
+    background-color: ${palette.blue100};
+    border-bottom: 2px solid ${palette.blue500};
+    cursor: pointer;
+  }
 `;
 
 export const MyPageBackButton = styled.button`

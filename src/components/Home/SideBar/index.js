@@ -1,14 +1,16 @@
 import React, { useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { BsFillPersonBadgeFill } from 'react-icons/bs';
 import { LuMenu } from 'react-icons/lu';
 import { IoCloseOutline } from 'react-icons/io5';
+import palette from '@constants/styles';
+import { useModal } from '@providers/ModalProvider';
 import * as Styled from '@styles/Home/SideBar.styles';
 import Guest from './Guest';
 import User from './User';
 import MyFavorite from './MyFavorite';
 import MySales from './MySales';
-import { useModal } from 'providers/ModalProvider';
-import { toast } from 'react-toastify';
 
 function SideBar({ width = 320 }) {
   const isUserLogin = useSelector((state) => state.auth.isUserLogin);
@@ -50,13 +52,16 @@ function SideBar({ width = 320 }) {
             <>
               <Styled.MiddlePanel>
                 <div style={{ display: 'flex', width: '100%', marginTop: '6px' }}>
-                  <Styled.UserImage
-                    src={
-                      process.env.REACT_APP_API_URL + (currentUser.image !== '' ? currentUser.image : '/user/images')
-                    }
-                  />
+                  <Styled.UserImage src={currentUser.image} />
                   <div>
-                    <Styled.UserNameText>{currentUser?.nickname}</Styled.UserNameText>
+                    <div style={{ display: 'flex', flexDirection: 'row', gap: '4px' }}>
+                      <Styled.UserNameText>{currentUser?.nickname}</Styled.UserNameText>
+                      <BsFillPersonBadgeFill
+                        size={18}
+                        color={currentUser.phoneVerified ? palette.blue500 : palette.red500}
+                        style={{ marginTop: '33px' }}
+                      />
+                    </div>
                     <Styled.UserEmailText>{currentUser?.email}</Styled.UserEmailText>
                     <br />
                   </div>

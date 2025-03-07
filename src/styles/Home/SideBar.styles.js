@@ -94,25 +94,28 @@ export const CategoryButton = styled.button`
 export const BackButton = styled.button`
   position: relative;
   margin-top: 7px;
-  margin-right: 10px;
+  margin-right: 7px;
   width: 24px;
   height: 24px;
   border: 0;
   border-radius: 4px;
-  background-color: aqua;
-  overflow: hidden;
+  padding: 0;
+  background-color: transparent;
+  color: ${palette.black500};
   cursor: pointer;
 `;
 
 export const RefreshButton = styled.button`
   position: absolute;
-  top: 32px;
+  top: 30px;
   right: 20px;
   width: 15px;
   height: 15px;
   border: 0;
   border-radius: 4px;
-  background-color: aqua;
+  padding: 0;
+  background-color: transparent;
+  color: ${palette.gray700};
   overflow: hidden;
   cursor: pointer;
 `;
@@ -172,6 +175,7 @@ export const UserImage = styled.img`
 export const UserNameText = styled.h2`
   margin-top: 32px;
   margin-bottom: 0px;
+  width: auto;
   text-align: left;
   text-decoration: none;
   font-family: 'kumap-bold';

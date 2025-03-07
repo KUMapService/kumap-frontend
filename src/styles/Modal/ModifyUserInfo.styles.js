@@ -53,6 +53,7 @@ export const MainText = styled.h1`
 `;
 
 export const UserImage = styled.img`
+  border: 0;
   border-radius: 48px;
   background-color: ${palette.gray500};
   width: 84px;
@@ -61,23 +62,45 @@ export const UserImage = styled.img`
   margin-bottom: 10px;
 `;
 
-export const UserImageEditButton = styled.button`
+export const UserImageButtonContainer = styled.div`
+  display: flex;
   position: absolute;
-  background: ${palette.white500};
-  filter: drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.3));
-  margin-top: 66px;
-  margin-left: 66px;
-  border: 0;
-  border-radius: 6px;
-  width: 32px;
-  height: 32px;
+  margin-top: 76px;
+  margin-left: 24px;
   z-index: 1;
+`;
+
+export const UserImageEditButton = styled.button`
+  background: ${palette.white500};
+  border: 1px solid ${palette.gray300};
+  border-right: 0;
+  border-radius: 30px 0px 0px 30px;
+  color: ${palette.gray700};
+  width: 28px;
+  height: 28px;
+
   transition:
     background 0.3s ease-in-out,
     color 0.3s ease-in-out;
 
   &:hover {
     background: ${palette.gray300};
+    border: 1px solid ${palette.gray300};
+    border-right: 0;
+    cursor: pointer;
+  }
+`;
+
+export const UserImageDeleteButton = styled(UserImageEditButton)`
+  border: 1px solid ${palette.gray300};
+  border-left: 0;
+  border-radius: 0px 30px 30px 0px;
+  color: ${palette.red500};
+
+  &:hover {
+    background: ${palette.red100};
+    border: 1px solid ${palette.red100};
+    border-left: 0;
     cursor: pointer;
   }
 `;
@@ -108,12 +131,20 @@ export const TopButton = styled.button`
   }
 `;
 
-export const NoticeText = styled.div`
-  margin-top: -20px;
+export const NoticeContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== 'isVerified',
+})`
+  color: ${(props) => (props.isVerified ? palette.blue500 : palette.red500)};
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  gap: 4px;
+  margin-top: -15px;
   width: 100%;
-  color: ${palette.red500};
+`;
+
+export const NoticeText = styled.div`
   font-size: 15px;
-  text-align: right;
 `;
 
 export const InputRow = styled.div`
@@ -130,13 +161,17 @@ export const SubText = styled.h2`
   color: ${palette.black500};
 `;
 
-export const DivLine = styled.hr`
+export const DivLine = styled.hr.withConfig({
+  shouldForwardProp: (prop) => prop !== 'hide',
+})`
   margin: ${(props) => (props.hide ? '5px' : '10px')} 0;
   border: 1px solid ${(props) => (props.hide ? 'transparent' : palette.gray500)};
   width: 100%;
 `;
 
-export const InputBox = styled.input`
+export const InputBox = styled.input.withConfig({
+  shouldForwardProp: (prop) => prop !== 'errorCaused',
+})`
   position: relative;
   flex: 1;
   box-sizing: border-box;
@@ -224,7 +259,9 @@ export const PermissionContext = styled.div`
   flex-direction: column;
 `;
 
-export const ToggleButton = styled.div`
+export const ToggleButton = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== 'isActive',
+})`
   position: relative;
   width: 52px;
   height: 26px;
@@ -291,6 +328,17 @@ export const SaveButton = styled(BottomButton)`
 
   &:hover {
     background: ${palette.blue700};
+    cursor: pointer;
+  }
+`;
+
+export const DeleteButton = styled(BottomButton)`
+  border: none;
+  background: ${palette.red500};
+  color: ${palette.white300};
+
+  &:hover {
+    background: ${palette.red700};
     cursor: pointer;
   }
 `;

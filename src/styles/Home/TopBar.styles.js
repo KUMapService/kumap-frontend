@@ -33,13 +33,9 @@ export const AddressSearchBar = styled.input`
   padding-left: 15px;
   padding-right: 40px;
   font-size: 15px;
-  color: ${palette.gray500};
+  color: ${palette.black500};
   outline: none;
   transition: border-color 0.3s ease-in-out;
-
-  &:focus {
-    border: 2px solid ${palette.blue500};
-  }
 `;
 
 export const ServiceTitleText = styled.div`
@@ -49,4 +45,25 @@ export const ServiceTitleText = styled.div`
   font-size: 24px;
   font-family: 'kumap-bold';
   text-align: center;
+`;
+
+export const RelatedSearchBox = styled.div`
+  width: 430px;
+  padding: 10px;
+  background-color: ${palette.white500};
+  border: 1px solid ${palette.gray500};
+  position: absolute;
+  top: 50px;
+  right: 0;
+  max-height: 210px;
+  overflow-y: auto;
+  z-index: 10;
+`;
+
+export const RelatedSearchItem = styled.div`
+  padding: 8px;
+  cursor: pointer;
+  &:hover {
+    background-color: ${palette.gray300};
+  }
 `;

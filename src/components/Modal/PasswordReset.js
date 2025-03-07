@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { IoClose } from 'react-icons/io5';
-import { fetchResetPassword } from '@api/auth';
+import { fetchResetPassword } from '@api/user';
 import * as Styled from '@styles/Modal/PasswordReset.styles';
 
 const PasswordReset = ({ className, close }) => {
@@ -28,7 +28,7 @@ const PasswordReset = ({ className, close }) => {
         alert('이메일이 확인되었습니다. 메일로 임시비밀번호 발송하였습니다');
         console.log(response);
       } catch (error) {
-        setErrorMessage(error.response.data.detail);
+        setErrorMessage(error.response?.data.detail);
       }
     }
   };
