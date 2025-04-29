@@ -16,6 +16,7 @@ function App() {
   const [serverStatus, setServerStatus] = useState(null);
 
   useEffect(() => {
+    console.log(process.env.REACT_APP_API_URL);
     fetchServerStatus()
       .then(function (response) {
         console.log(response);

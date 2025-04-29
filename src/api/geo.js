@@ -1,41 +1,56 @@
 import qs from 'qs';
-import { instance } from '@api/axios';
+import { kyInstance } from '@api/ky';
 import { API } from '@constants/route';
 import { setCurrentLandAddress } from 'store/actions/land';
 
 export const getPNU = async (dispatch, { lat, lng }) => {
   try {
-    const { data } = await instance.get(API.GEO.GET_PNU, {
-      params: { lat, lng },
-    });
-    dispatch(
-      setCurrentLandAddress({
-        pnu: data.pnu,
-        address: data.address,
-        lat: lat,
-        lng: lng,
-      }),
-    );
+    const {
+      data: { pnu, address },
+    } = await kyInstance.get(API.GEO.GET_PNU, { searchParams: { lat, lng } }).json();
+
+    dispatch(setCurrentLandAddress({ pnu, address, lat, lng }));
   } catch (error) {
-    throw new Error(error.response?.data.detail || '응답 실패');
+    const message = await error.response
+      ?.json()
+      .then((res) => res?.message)
+      .catch(() => null);
+    throw new Error(message || '응답 실패');
   }
 };
 
 export const fetchAutoCompleteAddress = async ({ query }) => {
-  const { data, status } = await instance.get(API.GEO.AUTO_COMPLETE_ADDRESS, {
-    params: { query },
-  });
-  return { ...data, status };
+  try {
+    const { data } = await kyInstance
+      .get(API.GEO.AUTO_COMPLETE_ADDRESS, {
+        searchParams: { query },
+      })
+      .json();
+
+    return data;
+  } catch (error) {
+    const message = await error.response
+      ?.json()
+      .then((res) => res?.message)
+      .catch(() => null);
+    throw new Error(message || '응답 실패');
+  }
 };
 
 export const getCadastralMap = async ({ pnu }) => {
   try {
-    const { data, status } = await instance.get(API.GEO.GET_CADASTRAL_MAP, {
-      params: { pnu: Array.isArray(pnu) ? pnu : [pnu] },
-      paramsSerializer: (params) => qs.stringify(params, { arrayFormat: 'repeat' }),
-    });
-    return { ...data, status };
+    const { data } = await kyInstance
+      .get(API.GEO.GET_CADASTRAL_MAP, {
+        searchParams: qs.parse(qs.stringify({ pnu: Array.isArray(pnu) ? pnu : [pnu] }, { arrayFormat: 'repeat' })),
+      })
+      .json();
+
+    return data;
   } catch (error) {
-    throw new Error(error.response?.data.detail || '응답 실패');
+    const message = await error.response
+      ?.json()
+      .then((res) => res?.message)
+      .catch(() => null);
+    throw new Error(message || '응답 실패');
   }
 };

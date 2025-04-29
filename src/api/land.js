@@ -1,24 +1,69 @@
-import axios from 'axios';
-//import { instance } from '@api/axios';
+import { kyInstance, authKy } from '@api/ky';
 import { API } from '@constants/route';
-import { authInstance } from '@api/axios';
 
-let landCancelTokenSource = null;
+let landAbortController = null;
+let landPredictPriceAbortController = null;
+let landReportAbortController = null;
 
 export const getLandData = async ({ pnu }) => {
   try {
-    if (landCancelTokenSource) {
-      landCancelTokenSource.cancel('새로운 요청으로 인해 이전 요청을 취소합니다.');
+    if (landAbortController) {
+      landAbortController.abort();
     }
-    landCancelTokenSource = axios.CancelToken.source();
+    landAbortController = new AbortController();
 
-    const { data, status } = await authInstance.get(API.LAND.GET_LAND_DATA, {
-      params: { pnu },
-      cancelToken: landCancelTokenSource.token,
+    const response = await authKy.get(API.LAND.GET_LAND_DATA, {
+      searchParams: { pnu },
+      signal: landAbortController.signal,
     });
-    return { ...data, status };
+
+    const data = await response.json();
+    return { ...data, status: response.status };
   } catch (error) {
     console.log(error);
-    throw new Error(error.response?.data.detail || '응답 실패');
+    const detail = await error.response?.json();
+    throw new Error(detail?.message || '응답 실패');
+  }
+};
+
+export const getLandPredictPrice = async ({ pnu }) => {
+  try {
+    if (landPredictPriceAbortController) {
+      landPredictPriceAbortController.abort();
+    }
+    landPredictPriceAbortController = new AbortController();
+
+    const response = await kyInstance.get(API.LAND.GET_LAND_PREDICTED_PRICE, {
+      searchParams: { pnu },
+      signal: landPredictPriceAbortController.signal,
+    });
+
+    const data = await response.json();
+    return { ...data, status: response.status };
+  } catch (error) {
+    console.log(error);
+    const detail = await error.response?.json();
+    throw new Error(detail?.message || '응답 실패');
+  }
+};
+
+export const getLandReport = async ({ pnu }) => {
+  try {
+    if (landReportAbortController) {
+      landReportAbortController.abort();
+    }
+    landReportAbortController = new AbortController();
+
+    const response = await kyInstance.get(API.LAND.GET_LAND_REPORT, {
+      searchParams: { pnu },
+      signal: landReportAbortController.signal,
+    });
+
+    const data = await response.json();
+    return { ...data, status: response.status };
+  } catch (error) {
+    console.log(error);
+    const detail = await error.response?.json();
+    throw new Error(detail?.message || '응답 실패');
   }
 };

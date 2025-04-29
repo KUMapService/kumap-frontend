@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import { BeatLoader } from 'react-spinners';
 import { BiLike } from 'react-icons/bi';
 import { BiSolidLike } from 'react-icons/bi';
-// import { BiSolidLike } from "react-icons/bi";
 import { RiRoadsterFill } from 'react-icons/ri';
+import { getCadastralMap } from '@api/geo';
+import { patchLikeStatus } from '@api/user';
+import { Loading } from '@components/Loading';
 import palette from '@constants/styles';
+import { useModal } from '@providers/ModalProvider';
 import * as Styled from '@styles/Home/LandDetail.styles';
-import { getCadastralMap } from 'api/geo';
-import { toast } from 'react-toastify';
-import { patchLikeStatus } from 'api/user';
-import { Loading } from 'components/Loading';
+import { addCommas } from '@utils/formatter';
 
 const LandDetail = ({ data }) => {
   //const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const LandDetail = ({ data }) => {
   const [highValueLand, setHighValueLand] = useState(false);
   const [isLandLike, setLandLike] = useState(false);
   const [isRoadView, setRoadView] = useState(false);
+  const modal = useModal();
 
   useEffect(() => {
     const handleMessage = (e) => {
@@ -47,23 +49,32 @@ const LandDetail = ({ data }) => {
 
     const setSideWindowCadastral = async (pnu) => {
       try {
-        var iframe = document.getElementsByClassName('side-window-map')[0];
-        if (iframe !== undefined) {
+        const iframe = document.getElementsByClassName('side-window-map')[0];
+        if (iframe) {
           const response = await getCadastralMap({ pnu: pnu });
-          console.log(response);
-          iframe.contentWindow.postMessage(JSON.parse(JSON.stringify(response)), '*');
-          iframe.addEventListener('load', () => {
-            document
-              .getElementsByClassName('side-window-map')[0]
-              .contentWindow.postMessage(JSON.parse(JSON.stringify(response)), '*');
-          }); //로딩이 안끝나면 여기서 처리
+
+          // 로드 이벤트를 먼저 추가
+          const handleLoad = () => {
+            iframe.contentWindow.postMessage(JSON.parse(JSON.stringify(response)), '*');
+            setLoading(false); // 로드 완료 상태 설정
+          };
+
+          // 이벤트 핸들러를 먼저 추가
+          iframe.addEventListener('load', handleLoad, true);
+
+          // iframe이 이미 로드된 상태라면 바로 실행
+          if (iframe.complete) {
+            handleLoad();
+          }
+
+          setInvalidData(false);
         }
-        setInvalidData(false);
       } catch (error) {
         toast.error(error);
         setInvalidData(true);
       }
     };
+
     // 사이드 윈도우 지도 설정
     setSideWindowCadastral(data?.pnu);
 
@@ -72,6 +83,7 @@ const LandDetail = ({ data }) => {
     } else {
       setHighValueLand(false);
     }
+
     // 좋아요 상태 설정
     setLandLike(data?.like);
     // 로드뷰 상태 설정
@@ -90,8 +102,6 @@ const LandDetail = ({ data }) => {
     } catch (error) {
       toast.error(error.message);
     }
-
-    console.log(data?.pnu);
   };
 
   const handleRoadView = (data) => {
@@ -113,6 +123,10 @@ const LandDetail = ({ data }) => {
     }
   };
 
+  const handleLandReport = (data) => {
+    modal.landReport({ data: data });
+  };
+
   if (!data || isInvalidData) {
     return (
       <Styled.Container>
@@ -120,19 +134,13 @@ const LandDetail = ({ data }) => {
       </Styled.Container>
     );
   } else if (isLoading) {
-    return (
-      <Styled.Container>
-        <Styled.Content>
-          <Loading type="medium" />
-        </Styled.Content>
-      </Styled.Container>
-    );
+    return <Loading type="medium" />;
   } else {
     return (
       <Styled.Container>
         <Styled.Content>
           {/* 상단 지도 */}
-          <Styled.Map className="side-window-map" src="http://localhost:51203/map/kakaomap" />
+          <Styled.Map className="side-window-map" src="https://api.landprice.info/map/kakaomap" />
           <Styled.RoadViewButton isRoadView={isRoadView} onClick={() => handleRoadView(data)}>
             <RiRoadsterFill size={20} style={{ marginTop: '2px' }} />
           </Styled.RoadViewButton>
@@ -143,8 +151,10 @@ const LandDetail = ({ data }) => {
               <BiLike size={20} style={{ marginTop: '2px' }} />
             )}
           </Styled.LikeButton>
-          <Styled.RegisterButton>매물 등록</Styled.RegisterButton>
-          <Styled.LikeCountText>0명이 이 토지를 좋아합니다.</Styled.LikeCountText>
+          <Styled.RegisterButton onClick={() => modal.landListingCreate({ data: data })}>
+            매물 등록
+          </Styled.RegisterButton>
+          <Styled.LikeCountText>{data?.total_like}명이 이 토지를 좋아합니다.</Styled.LikeCountText>
           {/* 경매일 경우 타경 표시 */}
           {/* {bidData !== null && (
             <Styled.BidCaseCdTxt>
@@ -161,7 +171,7 @@ const LandDetail = ({ data }) => {
                 {Math.floor(data?.detail?.predict_price * data?.detail?.area).toLocaleString('ko-KR')}원
               </Styled.LandPriceText>
               <Styled.LandPricePerText style={highValueLand ? { color: palette.red500 } : { color: palette.blue500 }}>
-                {Math.floor(data?.detail?.predict_price).toLocaleString('ko-KR')}원/m²당
+                {addCommas(data?.detail?.predict_price)}원/m²당
               </Styled.LandPricePerText>
               <>
                 <Styled.MiniText>공시지가의 </Styled.MiniText>
@@ -169,7 +179,9 @@ const LandDetail = ({ data }) => {
                   {parseInt((data?.detail?.predict_price / data?.detail?.official_price) * 100)}%
                 </Styled.MiniText>
               </>
-              <Styled.ViewLandReportButton>AI 토지 분석서 확인하기</Styled.ViewLandReportButton>
+              <Styled.ViewLandReportButton onClick={() => handleLandReport(data)}>
+                AI 토지 분석서 확인하기
+              </Styled.ViewLandReportButton>
             </Styled.LandPriceBox>
           ) : (
             <Styled.LandPriceBox>

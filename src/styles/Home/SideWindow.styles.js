@@ -36,7 +36,9 @@ export const TopButton = styled.button.withConfig({
   text-align: center;
   font-size: 12px;
   color: ${palette.black500};
-  transition: background-color 0.3s ease-in-out;
+  transition:
+    background-color 0.3s ease-in-out,
+    border 0.3s ease-in-out;
 
   &:hover {
     background-color: ${palette.blue100};
@@ -57,4 +59,25 @@ export const MyPageBackButton = styled.button`
   height: 36px;
   z-index: 20;
   cursor: pointer;
+`;
+
+export const Content = styled.div`
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  background-color: ${palette.white500};
+`;
+
+export const Footer = styled.footer`
+  background-color: ${palette.gray100};
+  width: 100%;
+  text-align: center;
+  font-size: 20px;
+  color: ${palette.gray700};
+  border-top: 1px solid ${palette.gray300};
+  margin-top: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

@@ -1,6 +1,8 @@
 import { createContext, useContext, useState } from 'react';
 import PasswordReset from '@components/Modal/PasswordReset';
 import ModifyUserInfo from '@components/Modal/ModifyUserInfo';
+import LandListingCreate from '@components/Modal/LandListingCreate';
+import LandReport from '@components/Modal/LandReport';
 
 const ModalContext = createContext();
 
@@ -23,6 +25,8 @@ export const ModalProvider = ({ children }) => {
       {children}
       {modalType === 'passwordReset' && <PasswordReset {...modalParams} close={close} />}
       {modalType === 'modifyUserInfo' && <ModifyUserInfo {...modalParams} close={close} />}
+      {modalType === 'landListingCreate' && <LandListingCreate {...modalParams} close={close} />}
+      {modalType === 'landReport' && <LandReport {...modalParams} close={close} />}
     </ModalContext.Provider>
   );
 };
@@ -35,5 +39,7 @@ export const useModal = () => {
     close,
     passwordReset: (params) => open('passwordReset', params),
     modifyUserInfo: (params) => open('modifyUserInfo', params),
+    landListingCreate: (params) => open('landListingCreate', params),
+    landReport: (params) => open('landReport', params),
   };
 };

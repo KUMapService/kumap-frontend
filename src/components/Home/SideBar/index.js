@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { BsFillPersonBadgeFill } from 'react-icons/bs';
 import { LuMenu } from 'react-icons/lu';
 import { IoCloseOutline } from 'react-icons/io5';
+import { getFavoriteLand } from '@api/user';
 import palette from '@constants/styles';
 import { useModal } from '@providers/ModalProvider';
 import * as Styled from '@styles/Home/SideBar.styles';
@@ -18,7 +19,21 @@ function SideBar({ width = 320 }) {
   const [xPos, setX] = useState(0);
   const side = useRef();
   const [currentPage, setCurrentPage] = useState('main');
+  const [myFavoriteLandList, setMyFavoriteLandList] = useState([]);
   const modal = useModal();
+
+  useEffect(() => {
+    if (isUserLogin) {
+      // TODO: 관심목록 받아오기
+      fetchFavoriteData();
+      setMyFavoriteLandList([]);
+    }
+  }, [isUserLogin]);
+
+  const fetchFavoriteData = async () => {
+    const response = await getFavoriteLand();
+    setMyFavoriteLandList(response.data.favorites);
+  };
 
   const toggleMenu = () => {
     if (xPos < 0) {
@@ -72,7 +87,13 @@ function SideBar({ width = 320 }) {
                 </div>
               </Styled.MiddlePanel>
               {currentPage === 'main' && <User setCurrentPage={setCurrentPage} />}
-              {currentPage === 'myFavorite' && <MyFavorite setCurrentPage={setCurrentPage} />}
+              {currentPage === 'myFavorite' && (
+                <MyFavorite
+                  myFavoriteLandList={myFavoriteLandList}
+                  setCurrentPage={setCurrentPage}
+                  fetchFavoriteData={fetchFavoriteData}
+                />
+              )}
               {currentPage === 'mySales' && <MySales setCurrentPage={setCurrentPage} />}
             </>
           )}

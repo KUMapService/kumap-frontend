@@ -1,11 +1,13 @@
-import { instance, authInstance } from '@api/axios';
+import { kyInstance, authKy } from '@api/ky';
 import { API } from '@constants/route';
 
 export const fetchResetPassword = async ({ email }) => {
-  const { data, status } = await instance.post(API.USER.RESET_PASSWORD, {
-    email,
+  const response = await kyInstance.post(API.USER.RESET_PASSWORD, {
+    json: { email },
   });
-  return { ...data, status };
+
+  const data = await response.json();
+  return { ...data, status: response.status };
 };
 
 export const patchUserInfo = async ({ image, name, nickname, phone, isImageDeleted }) => {
@@ -20,45 +22,57 @@ export const patchUserInfo = async ({ image, name, nickname, phone, isImageDelet
   }
 
   try {
-    const { data, status } = await authInstance.post(API.USER.MODIFY_USER_INFO, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+    const response = await authKy.post(API.USER.MODIFY_USER_INFO, {
+      body: formData,
     });
-    return { ...data, status };
+
+    const data = await response.json();
+    return { ...data, status: response.status };
   } catch (error) {
-    throw new Error(error.response?.data.detail || '응답 실패');
+    const detail = await error.response?.json();
+    throw new Error(detail?.message || '응답 실패');
   }
 };
 
 export const patchUserPassword = async ({ currentPassword, changePassword }) => {
   try {
-    const { data, status } = await authInstance.post(API.USER.CHANGE_PASSWORD, {
-      current_password: currentPassword,
-      change_password: changePassword,
+    const response = await authKy.post(API.USER.CHANGE_PASSWORD, {
+      json: {
+        current_password: currentPassword,
+        change_password: changePassword,
+      },
     });
-    return { ...data, status };
+
+    const data = await response.json();
+    return { ...data, status: response.status };
   } catch (error) {
-    throw new Error(error.response?.data.detail || '응답 실패');
+    const detail = await error.response?.json();
+    throw new Error(detail?.message || '응답 실패');
   }
 };
 
 export const patchLikeStatus = async ({ pnu }) => {
   try {
-    const { data, status } = await authInstance.post(API.USER.LAND_LIKE, {
-      pnu: pnu,
+    const response = await authKy.post(API.USER.LAND_LIKE, {
+      json: { pnu },
     });
-    return { ...data, status };
+
+    const data = await response.json();
+    return { ...data, status: response.status };
   } catch (error) {
-    throw new Error(error.response?.data.detail || '응답 실패');
+    const detail = await error.response?.json();
+    throw new Error(detail?.message || '응답 실패');
   }
 };
 
 export const getFavoriteLand = async () => {
   try {
-    const { data, status } = await authInstance.get(API.USER.GET_FAVORITE_LAND, {});
-    return { ...data, status };
+    const response = await authKy.get(API.USER.GET_FAVORITE_LAND);
+
+    const data = await response.json();
+    return { ...data, status: response.status };
   } catch (error) {
-    throw new Error(error.response?.data.detail || '응답 실패');
+    const detail = await error.response?.json();
+    throw new Error(detail?.message || '응답 실패');
   }
 };

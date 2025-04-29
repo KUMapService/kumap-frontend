@@ -8,15 +8,17 @@ export const MapContainer = styled.div`
   z-index: 5;
 `;
 
-export const MapButton = styled.button`
+export const MapButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== 'isToggled' && prop !== 'type',
+})`
   position: absolute;
   background: ${(props) =>
-    props.istoggled === 'on'
-      ? props.type === 'bid'
+    props.isToggled
+      ? props.type === 'auction'
         ? palette.red500
-        : props.type === 'sale'
+        : props.type === 'listing'
           ? palette.blue500
-          : palette.gray500
+          : palette.gray700
       : palette.white500};
   filter: drop-shadow(0px 0px 6px rgba(0, 0, 0, 0.3));
   border: 0;
@@ -29,6 +31,19 @@ export const MapButton = styled.button`
   text-align: center;
   font-family: 'kumap-bold';
   font-size: 12px;
-  color: ${(props) => (props.istoggled === 'on' ? palette.white500 : palette.gray700)};
+  color: ${(props) => (props.isToggled ? palette.white500 : palette.gray700)};
   cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+
+  &:hover {
+    background: ${(props) =>
+      props.isToggled
+        ? props.type === 'auction'
+          ? palette.red700
+          : props.type === 'listing'
+            ? palette.blue700
+            : palette.gray900
+        : palette.gray300};
+    cursor: pointer;
+  }
 `;

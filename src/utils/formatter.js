@@ -19,3 +19,7 @@ export const numberFormat = (number) => {
     return Math.floor(number).toLocaleString('ko-KR');
   }
 };
+
+export const addCommas = (num) => {
+  return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};

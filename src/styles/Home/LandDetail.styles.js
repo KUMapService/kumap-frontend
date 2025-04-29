@@ -6,7 +6,6 @@ export const Container = styled.div`
   background: ${palette.white300};
   flex-shrink: 1;
   width: 100%;
-  height: calc(100% - 50px);
   z-index: 8;
 `;
 

@@ -8,7 +8,7 @@ import { MdOutlineMap } from 'react-icons/md';
 import palette from '@constants/styles';
 import { MapContainer, MapButton } from '@styles/Home/KakaoMap/KakaoMap.styles';
 import '@styles/Home/KakaoMap/KakaoMap.css';
-import { getCadastralMap, getPNU } from 'api/geo';
+import { getCadastralMap, getPNU } from '@api/geo';
 import { toast } from 'react-toastify';
 
 const KakaoMap = () => {
@@ -91,26 +91,29 @@ const KakaoMap = () => {
         const newPolygons = [];
         for (var i = 0; i < response.polygons.length; i++) {
           for (var j = 0; j < response.polygons[i].length; j++) {
-            var path = new Array();
             for (var k = 0; k < response.polygons[i][j].length; k++) {
-              var polygonLatlng = new kakao.maps.LatLng(response.polygons[i][j][k][1], response.polygons[i][j][k][0]);
-              path.push(polygonLatlng);
+              var path = new Array();
+              for (var l = 0; l < response.polygons[i][j][k].length; l++) {
+                var polygonLatlng = new kakao.maps.LatLng(
+                  response.polygons[i][j][k][l][1],
+                  response.polygons[i][j][k][l][0],
+                );
+                path.push(polygonLatlng);
+              }
+              const polygon = new kakao.maps.Polygon({
+                path,
+                strokeWeight: 3,
+                strokeColor: palette.blue500,
+                strokeOpacity: 0.8,
+                strokeStyle: 'solid',
+                fillColor: palette.blue100,
+                fillOpacity: 0.7,
+              });
+              polygon.setMap(map);
+              newPolygons.push(polygon);
             }
-            console.log(path);
-            const polygon = new kakao.maps.Polygon({
-              path,
-              strokeWeight: 2,
-              strokeColor: palette.blue500,
-              strokeOpacity: 0.8,
-              strokeStyle: 'solid',
-              fillColor: palette.blue100,
-              fillOpacity: 0.7,
-            });
-            polygon.setMap(map);
-            newPolygons.push(polygon);
           }
         }
-        console.log('New polygons array:', newPolygons);
         setCadastralMap(newPolygons);
       } catch (error) {
         toast.error(error.message);
@@ -125,6 +128,25 @@ const KakaoMap = () => {
     }
     const latlng = mouseEvent.latLng;
     await getPNU(dispatch, { lat: latlng.getLat(), lng: latlng.getLng() });
+  };
+
+  const moveToCurrentPosition = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          const locPosition = new kakao.maps.LatLng(lat, lng);
+          // 지도 중심을 현재 위치로 설정
+          map.setCenter(locPosition);
+        },
+        () => {
+          toast.error('현재 위치를 가져오는 데 실패했습니다.');
+        },
+      );
+    } else {
+      toast.error('이 브라우저는 Geolocation을 지원하지 않습니다.');
+    }
   };
 
   const changeMapType = () => {
@@ -143,16 +165,16 @@ const KakaoMap = () => {
 
   return (
     <MapContainer id="map">
-      <MapButton number={1}>
+      <MapButton number={1} onClick={moveToCurrentPosition}>
         <BiCurrentLocation size="28" style={{ marginTop: '2px' }} />
       </MapButton>
-      <MapButton number={2} istoggled={isSkyView ? 'on' : 'off'} type="map" onClick={changeMapType}>
+      <MapButton number={2} isToggled={isSkyView} type="map" onClick={changeMapType}>
         <MdOutlineMap size="28" style={{ marginTop: '2px' }} />
       </MapButton>
-      <MapButton number={3} istoggled={'on'} type="bid">
+      <MapButton number={3} isToggled={true} type="auction">
         경매
       </MapButton>
-      <MapButton number={4} istoggled={'on'} type="sale">
+      <MapButton number={4} isToggled={true} type="listing">
         매물
       </MapButton>
     </MapContainer>

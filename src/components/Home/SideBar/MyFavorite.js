@@ -1,36 +1,15 @@
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { IoIosArrowBack } from 'react-icons/io';
 import { LuRefreshCcw } from 'react-icons/lu';
 import { numberFormat } from '@utils/formatter';
 import * as Styled from '@styles/Home/SideBar.styles';
 import palette from '@constants/styles';
-import { getFavoriteLand } from '@api/user';
+
 import { setCurrentLandAddress } from '@store/actions/land';
 
-function MyFavorite({ setCurrentPage }) {
+function MyFavorite({ myFavoriteLandList, setCurrentPage, fetchFavoriteData }) {
   // global variables
   const dispatch = useDispatch();
-  const isUserLogin = useSelector((state) => state.auth.isUserLogin);
-  const currentUser = useSelector((state) => state.auth.currentUser);
-
-  const [myFavoriteLandList, setMyFavoriteLandList] = useState([]);
-  const [refresh, setRefresh] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await getFavoriteLand();
-      console.log(response);
-      setMyFavoriteLandList(response.favorites);
-    };
-    if (isUserLogin) {
-      // TODO: 관심목록 받아오기
-      fetchData();
-      console.log(currentUser);
-      setMyFavoriteLandList([]);
-    }
-    setRefresh(false);
-  }, [isUserLogin, refresh]);
 
   const checkLandType = (land) => {
     if (land.auction !== null) {
@@ -60,7 +39,7 @@ function MyFavorite({ setCurrentPage }) {
           <IoIosArrowBack size={21} style={{ marginTop: '-2px', marginLeft: '-2px' }} />
         </Styled.BackButton>
         <Styled.CategoryText>나의 관심 목록</Styled.CategoryText>
-        <Styled.RefreshButton onClick={() => setRefresh(true)}>
+        <Styled.RefreshButton onClick={fetchFavoriteData}>
           <LuRefreshCcw size={16} />
         </Styled.RefreshButton>
       </div>
