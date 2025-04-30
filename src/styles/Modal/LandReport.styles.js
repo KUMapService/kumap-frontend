@@ -32,7 +32,7 @@ export const Inner = styled.div`
   box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.5);
   background-color: ${palette.white300};
   border-radius: 15px;
-  min-width: 300px;
+  min-width: 550px;
   max-width: 750px;
   height: auto;
   max-height: 701px;
@@ -98,4 +98,36 @@ export const ErrorMessage = styled.span`
   text-align: left;
   font-size: 12px;
   color: ${palette.red500};
+`;
+
+export const GuestPanel = styled.div`
+  position: absolute;
+  top: 70px;
+  left: 15px;
+  width: calc(100% - 30px);
+  height: calc(100% - 120px);
+  backdrop-filter: blur(6px);
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 15px;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const LoginButton = styled.button`
+  z-index: 3;
+  background-color: transparent;
+  color: ${palette.blue500};
+  border: 2px solid ${palette.blue500};
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(191, 190, 232, 0.5);
+  }
 `;
