@@ -4,6 +4,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { fetchLogin } from '@api/auth';
 import { useModal } from '@providers/ModalProvider';
 import * as Styled from '@styles/Login.styles';
+import { validateEmail } from '@utils/validators';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
@@ -58,6 +59,8 @@ export const Login = () => {
       return;
     } else if (password === '') {
       setErrorMessage('비밀번호를 입력해주세요.');
+    } else if (!validateEmail(email)) {
+      setErrorMessage('이메일 형식이 잘못되었습니다.');
     } else {
       try {
         const response = await fetchLogin({ email, password });
@@ -65,7 +68,7 @@ export const Login = () => {
         localStorage.setItem('refresh_token', response.data.refresh_token);
         navigate('/');
       } catch (error) {
-        setErrorMessage(error.response.data.detail);
+        setErrorMessage('이메일 또는 비밀번호가 잘못되었습니다.');
       }
     }
   };

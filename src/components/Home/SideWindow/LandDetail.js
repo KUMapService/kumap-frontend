@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { BeatLoader } from 'react-spinners';
@@ -23,10 +23,36 @@ const LandDetail = ({ data }) => {
   const [highValueLand, setHighValueLand] = useState(false);
   const [isLandLike, setLandLike] = useState(false);
   const [isRoadView, setRoadView] = useState(false);
+  const latestData = useRef(null);
   const modal = useModal();
 
   useEffect(() => {
+    const setSideWindowCadastral = (pnu) => {
+      const interval = setInterval(async () => {
+        const iframe = document.getElementsByClassName('side-window-map')[0];
+        if (iframe?.contentWindow) {
+          try {
+            const response = await getCadastralMap({ pnu });
+            iframe.contentWindow.postMessage({ polygons: response?.polygons, pnu: pnu }, '*');
+            setLoading(false);
+            setInvalidData(false);
+          } catch (error) {
+            toast.error(error);
+            setInvalidData(true);
+          } finally {
+            clearInterval(interval);
+          }
+        } else {
+          console.log('⏳ iframe not ready, waiting...');
+        }
+      }, 100); // 100ms 간격으로 체크
+    };
+
     const handleMessage = (e) => {
+      if (e.data?.type === 'ready') {
+        // 사이드 윈도우 지도 설정
+        setSideWindowCadastral(latestData.current?.pnu);
+      }
       if (e.data?.type === 'error') {
         toast.error(e.data.message);
         setRoadView(false);
@@ -39,55 +65,26 @@ const LandDetail = ({ data }) => {
   }, []);
 
   useEffect(() => {
+    latestData.current = data;
+  }, [data]);
+
+  useEffect(() => {
     if (!data) return;
 
     if (currentLandAddress.pnu !== data?.pnu) {
       setLoading(true);
+      // 좋아요 상태 설정
+      setLandLike(data?.like);
+      // 로드뷰 상태 설정
+      setRoadView(false);
     } else {
       setLoading(false);
     }
-
-    const setSideWindowCadastral = async (pnu) => {
-      try {
-        const iframe = document.getElementsByClassName('side-window-map')[0];
-        if (iframe) {
-          const response = await getCadastralMap({ pnu: pnu });
-
-          // 로드 이벤트를 먼저 추가
-          const handleLoad = () => {
-            iframe.contentWindow.postMessage(JSON.parse(JSON.stringify(response)), '*');
-            setLoading(false); // 로드 완료 상태 설정
-          };
-
-          // 이벤트 핸들러를 먼저 추가
-          iframe.addEventListener('load', handleLoad, true);
-
-          // iframe이 이미 로드된 상태라면 바로 실행
-          if (iframe.complete) {
-            handleLoad();
-          }
-
-          setInvalidData(false);
-        }
-      } catch (error) {
-        toast.error(error);
-        setInvalidData(true);
-      }
-    };
-
-    // 사이드 윈도우 지도 설정
-    setSideWindowCadastral(data?.pnu);
-
-    if (data?.detail?.predict_price / data?.detail?.predict_price > 1) {
+    if (data?.predicted_price / data?.detail?.official_price > 1) {
       setHighValueLand(true);
     } else {
       setHighValueLand(false);
     }
-
-    // 좋아요 상태 설정
-    setLandLike(data?.like);
-    // 로드뷰 상태 설정
-    setRoadView(false);
   }, [currentLandAddress, data]);
 
   const handleLandLike = async (data) => {
@@ -141,6 +138,7 @@ const LandDetail = ({ data }) => {
         <Styled.Content>
           {/* 상단 지도 */}
           <Styled.Map className="side-window-map" src="https://api.landprice.info/map/kakaomap" />
+
           <Styled.RoadViewButton isRoadView={isRoadView} onClick={() => handleRoadView(data)}>
             <RiRoadsterFill size={20} style={{ marginTop: '2px' }} />
           </Styled.RoadViewButton>
@@ -164,19 +162,21 @@ const LandDetail = ({ data }) => {
           {/* 토지 주소 및 예측가 영역 */}
           <Styled.AddressText>{data?.address?.fulladdr}</Styled.AddressText>
           <Styled.DivLine />
-          {data?.detail?.predict_price !== null ? (
+          {data?.predicted_price !== null ? (
             <Styled.LandPriceBox>
-              <Styled.MiniText>토지 예측가({data?.last_predict_date} 기준)</Styled.MiniText>
+              <Styled.MiniText>토지 예측가({data?.last_predicted_date} 기준)</Styled.MiniText>
               <Styled.LandPriceText style={highValueLand ? { color: palette.red500 } : { color: palette.blue500 }}>
-                {Math.floor(data?.detail?.predict_price * data?.detail?.area).toLocaleString('ko-KR')}원
+                {Math.floor(data?.predicted_price * data?.detail?.land_area).toLocaleString('ko-KR')}원
               </Styled.LandPriceText>
               <Styled.LandPricePerText style={highValueLand ? { color: palette.red500 } : { color: palette.blue500 }}>
-                {addCommas(data?.detail?.predict_price)}원/m²당
+                {addCommas(data?.predicted_price)}원/m²당
               </Styled.LandPricePerText>
               <>
-                <Styled.MiniText>공시지가의 </Styled.MiniText>
-                <Styled.MiniText style={highValueLand ? { color: palette.red500 } : { color: palette.blue500 }}>
-                  {parseInt((data?.detail?.predict_price / data?.detail?.official_price) * 100)}%
+                <Styled.MiniText>
+                  공시지가의{' '}
+                  <Styled.MiniText style={highValueLand ? { color: palette.red500 } : { color: palette.blue500 }}>
+                    {parseInt((data?.predicted_price / data?.detail?.official_price) * 100)}%
+                  </Styled.MiniText>
                 </Styled.MiniText>
               </>
               <Styled.ViewLandReportButton onClick={() => handleLandReport(data)}>
@@ -212,17 +212,17 @@ const LandDetail = ({ data }) => {
             </Styled.FeatureBox>
             <Styled.FeatureBox>
               <Styled.SubTitleText>면적</Styled.SubTitleText>
-              <Styled.FeatureText>{Math.floor(data?.detail?.area).toLocaleString('ko-KR')}m²</Styled.FeatureText>
+              <Styled.FeatureText>{Math.floor(data?.detail?.land_area).toLocaleString('ko-KR')}m²</Styled.FeatureText>
             </Styled.FeatureBox>
           </Styled.FeatureRow>
           <Styled.FeatureRow>
             <Styled.FeatureBox>
               <Styled.SubTitleText>형상</Styled.SubTitleText>
-              <Styled.FeatureText>{data?.detail?.form}</Styled.FeatureText>
+              <Styled.FeatureText>{data?.detail?.land_form}</Styled.FeatureText>
             </Styled.FeatureBox>
             <Styled.FeatureBox>
               <Styled.SubTitleText>지세</Styled.SubTitleText>
-              <Styled.FeatureText>{data?.detail?.height}</Styled.FeatureText>
+              <Styled.FeatureText>{data?.detail?.land_height}</Styled.FeatureText>
             </Styled.FeatureBox>
           </Styled.FeatureRow>
           <Styled.FeatureRow>

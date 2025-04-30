@@ -12,17 +12,20 @@ export const getLandData = async ({ pnu }) => {
     }
     landAbortController = new AbortController();
 
-    const response = await authKy.get(API.LAND.GET_LAND_DATA, {
-      searchParams: { pnu },
-      signal: landAbortController.signal,
-    });
+    const { data } = await authKy
+      .get(API.LAND.GET_LAND_DATA, {
+        searchParams: { pnu },
+        signal: landAbortController.signal,
+      })
+      .json();
 
-    const data = await response.json();
-    return { ...data, status: response.status };
+    return { ...data };
   } catch (error) {
-    console.log(error);
-    const detail = await error.response?.json();
-    throw new Error(detail?.message || '응답 실패');
+    const message = await error.response
+      ?.json()
+      .then((res) => res?.message)
+      .catch(() => null);
+    throw new Error(message || '응답 실패');
   }
 };
 
@@ -33,17 +36,20 @@ export const getLandPredictPrice = async ({ pnu }) => {
     }
     landPredictPriceAbortController = new AbortController();
 
-    const response = await kyInstance.get(API.LAND.GET_LAND_PREDICTED_PRICE, {
-      searchParams: { pnu },
-      signal: landPredictPriceAbortController.signal,
-    });
+    const { data } = await kyInstance
+      .get(API.LAND.GET_LAND_PREDICTED_PRICE, {
+        searchParams: { pnu },
+        signal: landPredictPriceAbortController.signal,
+      })
+      .json();
 
-    const data = await response.json();
-    return { ...data, status: response.status };
+    return { ...data };
   } catch (error) {
-    console.log(error);
-    const detail = await error.response?.json();
-    throw new Error(detail?.message || '응답 실패');
+    const message = await error.response
+      ?.json()
+      .then((res) => res?.message)
+      .catch(() => null);
+    throw new Error(message || '응답 실패');
   }
 };
 
@@ -54,16 +60,19 @@ export const getLandReport = async ({ pnu }) => {
     }
     landReportAbortController = new AbortController();
 
-    const response = await kyInstance.get(API.LAND.GET_LAND_REPORT, {
-      searchParams: { pnu },
-      signal: landReportAbortController.signal,
-    });
+    const { data } = await kyInstance
+      .get(API.LAND.GET_LAND_REPORT, {
+        searchParams: { pnu },
+        signal: landReportAbortController.signal,
+      })
+      .json();
 
-    const data = await response.json();
-    return { ...data, status: response.status };
+    return { ...data };
   } catch (error) {
-    console.log(error);
-    const detail = await error.response?.json();
-    throw new Error(detail?.message || '응답 실패');
+    const message = await error.response
+      ?.json()
+      .then((res) => res?.message)
+      .catch(() => null);
+    throw new Error(message || '응답 실패');
   }
 };

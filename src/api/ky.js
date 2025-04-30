@@ -61,6 +61,7 @@ export const authKy = ky.create({
         const { response } = error;
         const originalRequest = error.request;
 
+        // ✅ 1. 401일 경우 리프레시 시도
         if (response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
 
@@ -83,7 +84,17 @@ export const authKy = ky.create({
           }
         }
 
-        return error;
+        // ✅ 2. 에러 메시지를 응답에서 파싱해서 에러 객체에 붙이기
+        try {
+          const resData = await response.clone().json(); // clone 안 하면 body stream 날라감
+          console.log(resData.message);
+          const customError = new Error(resData.message || '요청 실패');
+          customError.name = 'APIError';
+          customError.response = response;
+          throw customError; // 이거 안 하면 message 안 뜸
+        } catch (e) {
+          return error; // JSON 파싱 실패했을 때 fallback
+        }
       },
     ],
   },

@@ -8,7 +8,7 @@ export const fetchLogin = async ({ email, password }) => {
   });
 
   const data = await response.json();
-  return { ...data, status: response.status };
+  return { ...data, message: response.message };
 };
 
 export const fetchDupCheck = async ({ email, nickname }) => {
