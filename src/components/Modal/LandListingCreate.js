@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { IoClose } from 'react-icons/io5';
+import { fetchRegisterListing } from '@api/listing';
 import * as Styled from '@styles/Modal/LandListingCreate.styles';
 import { addCommas } from '@utils/formatter';
-//import { toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 export const LandListingCreate = ({ className, close, data }) => {
   const [activate, setActivate] = useState(false);
@@ -10,8 +11,8 @@ export const LandListingCreate = ({ className, close, data }) => {
   const [circleActive, setCircleActice] = useState(1);
   const [landArea, setLandArea] = useState('0');
   const [landPrice, setLandPrice] = useState('0');
-  const [summary, setSummary] = useState('');
-  const [summaryCount, setSummaryCount] = useState(0);
+  const [landSummary, setLandSummary] = useState('');
+  const [landSummaryCount, setLandSummaryCount] = useState(0);
 
   useEffect(() => {
     setLandArea(data?.detail?.area?.toLocaleString() || '0');
@@ -35,7 +36,7 @@ export const LandListingCreate = ({ className, close, data }) => {
     }
   }, [activate, landArea, landPrice]);
 
-  const HandlerProgressButton = (type) => {
+  const HandlerProgressButton = async (type) => {
     if (type === 'next') {
       if (circleActive < 4 && activate) {
         if (circleActive === 1 && (landArea === 0 || landArea === '')) {
@@ -47,24 +48,39 @@ export const LandListingCreate = ({ className, close, data }) => {
         }
         setCircleActice(circleActive + 1);
       } else if (circleActive === 4) {
-        console.log(summary);
-        //toast.success('성공');
-      }
-    } else {
-      if (circleActive > 1) {
-        if (circleActive > 2) {
-          setActivate(true);
-        } else {
+        try {
           setActivate(false);
+          const response = await fetchRegisterListing({
+            pnu: data?.pnu,
+            lat: data?.lat,
+            lng: data?.lng,
+            area: Number(landArea.toString().replaceAll(',', '')),
+            price: Number(landPrice.toString().replaceAll(',', '')),
+            summary: landSummary,
+          });
+          toast.success(response.message);
+        } catch (err) {
+          toast.error(err.message);
+        } finally {
+          setActivate(true);
+          close?.();
         }
-        setCircleActice(circleActive - 1);
+      } else {
+        if (circleActive > 1) {
+          if (circleActive > 2) {
+            setActivate(true);
+          } else {
+            setActivate(false);
+          }
+          setCircleActice(circleActive - 1);
+        }
       }
     }
   };
 
   const HandlerSummaryInput = (e) => {
-    setSummary(e.target.value);
-    setSummaryCount(e.target.value.length);
+    setLandSummary(e.target.value);
+    setLandSummaryCount(e.target.value.length);
   };
 
   const changeLandArea = (e) => {
@@ -159,7 +175,7 @@ export const LandListingCreate = ({ className, close, data }) => {
             간략하게 매물 소개글을 작성해주세요.
             <br />
             <Styled.LandSummaryInput placeholder="매물 소개" onChange={HandlerSummaryInput} maxLength={100} />
-            <Styled.LandSummaryCountText>{summaryCount}/100 자</Styled.LandSummaryCountText>
+            <Styled.LandSummaryCountText>{landSummaryCount}/100 자</Styled.LandSummaryCountText>
             약관에 동의해 주십시오.
             <br />
             개인정보 수집 및 제3자 제공 동의

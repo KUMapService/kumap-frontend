@@ -17,7 +17,6 @@ export const LandReport = ({ className, close, data }) => {
   useEffect(() => {
     const fetchLandReport = async (pnu) => {
       const response = await getLandReport({ pnu: pnu });
-      console.log(response);
       setReport(response.content);
     };
     fetchLandReport(data.pnu);

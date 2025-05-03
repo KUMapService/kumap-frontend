@@ -5,15 +5,18 @@ import { BeatLoader } from 'react-spinners';
 import { BiLike } from 'react-icons/bi';
 import { BiSolidLike } from 'react-icons/bi';
 import { RiRoadsterFill } from 'react-icons/ri';
+
 import { getCadastralMap } from '@api/geo';
 import { patchLikeStatus } from '@api/user';
 import { Loading } from '@components/Loading';
+import LandDetail from '@components/Home/SideWindow/LandInfo/LandDetail';
+import LandListing from '@components/Home/SideWindow/LandInfo/LandListing';
 import palette from '@constants/styles';
 import { useModal } from '@providers/ModalProvider';
-import * as Styled from '@styles/Home/LandDetail.styles';
+import * as Styled from '@styles/Home/LandInfo.styles';
 import { addCommas } from '@utils/formatter';
 
-const LandDetail = ({ data }) => {
+const LandInfo = ({ data }) => {
   //const dispatch = useDispatch();
   const isUserLogin = useSelector((state) => state.auth.isUserLogin);
   //const currentUser = useSelector((state) => state.auth.currentUser);
@@ -138,7 +141,6 @@ const LandDetail = ({ data }) => {
         <Styled.Content>
           {/* 상단 지도 */}
           <Styled.Map className="side-window-map" src="https://api.landprice.info/map/kakaomap" />
-
           <Styled.RoadViewButton isRoadView={isRoadView} onClick={() => handleRoadView(data)}>
             <RiRoadsterFill size={20} style={{ marginTop: '2px' }} />
           </Styled.RoadViewButton>
@@ -149,18 +151,31 @@ const LandDetail = ({ data }) => {
               <BiLike size={20} style={{ marginTop: '2px' }} />
             )}
           </Styled.LikeButton>
-          <Styled.RegisterButton onClick={() => modal.landListingCreate({ data: data })}>
-            매물 등록
+          <Styled.RegisterButton
+            onClick={() => modal.landListingCreate({ data: data })}
+            disabled={data?.listing === null ? false : true}
+            style={
+              data?.listing === null
+                ? { backgroundColor: palette.white500, color: palette.gray500 }
+                : { backgroundColor: palette.gray500, color: palette.white500 }
+            }
+          >
+            {data?.listing === null ? '매물 등록' : data?.listing?.nickname + '님의 토지'}
           </Styled.RegisterButton>
-          <Styled.LikeCountText>{data?.total_like}명이 이 토지를 좋아합니다.</Styled.LikeCountText>
+          <Styled.LikeCountText>{data?.like_count}명이 이 토지를 좋아합니다.</Styled.LikeCountText>
           {/* 경매일 경우 타경 표시 */}
           {/* {bidData !== null && (
-            <Styled.BidCaseCdTxt>
-              {bidCourtInCharge} {transCaseCd(bidCaseCd)}
-            </Styled.BidCaseCdTxt>
-          )} */}
-          {/* 토지 주소 및 예측가 영역 */}
+					<Styled.BidCaseCdTxt>
+						{bidCourtInCharge} {transCaseCd(bidCaseCd)}
+					</Styled.BidCaseCdTxt>
+					)} */}
+          {/* 토지 주소 영역 */}
           <Styled.AddressText>{data?.address?.fulladdr}</Styled.AddressText>
+
+          {/* 토지 매물 정보 영역 */}
+          <LandListing data={data} />
+
+          {/* 토지 예측가 영역 */}
           <Styled.DivLine />
           {data?.predicted_price !== null ? (
             <Styled.LandPriceBox>
@@ -193,93 +208,9 @@ const LandDetail = ({ data }) => {
             </Styled.LandPriceBox>
           )}
           <Styled.DivLine />
+          {/* TODO: 토지 경매 정보 영역 */}
           {/* 토지 특성 정보 영역 */}
-          <Styled.TitleText>토지 기본 정보 (기준년도: {data?.land_feature_stdr_year}년)</Styled.TitleText>
-          <Styled.FeatureRow>
-            <Styled.FeatureBox>
-              <Styled.SubTitleText>지목</Styled.SubTitleText>
-              <Styled.FeatureText>{data?.detail?.land_cls}</Styled.FeatureText>
-            </Styled.FeatureBox>
-            <Styled.FeatureBox>
-              <Styled.SubTitleText>이용상황</Styled.SubTitleText>
-              <Styled.FeatureText>{data?.detail?.land_usage}</Styled.FeatureText>
-            </Styled.FeatureBox>
-          </Styled.FeatureRow>
-          <Styled.FeatureRow>
-            <Styled.FeatureBox>
-              <Styled.SubTitleText>용도지역</Styled.SubTitleText>
-              <Styled.FeatureText>{data?.detail?.land_zoning}</Styled.FeatureText>
-            </Styled.FeatureBox>
-            <Styled.FeatureBox>
-              <Styled.SubTitleText>면적</Styled.SubTitleText>
-              <Styled.FeatureText>{Math.floor(data?.detail?.land_area).toLocaleString('ko-KR')}m²</Styled.FeatureText>
-            </Styled.FeatureBox>
-          </Styled.FeatureRow>
-          <Styled.FeatureRow>
-            <Styled.FeatureBox>
-              <Styled.SubTitleText>형상</Styled.SubTitleText>
-              <Styled.FeatureText>{data?.detail?.land_form}</Styled.FeatureText>
-            </Styled.FeatureBox>
-            <Styled.FeatureBox>
-              <Styled.SubTitleText>지세</Styled.SubTitleText>
-              <Styled.FeatureText>{data?.detail?.land_height}</Styled.FeatureText>
-            </Styled.FeatureBox>
-          </Styled.FeatureRow>
-          <Styled.FeatureRow>
-            <Styled.FeatureBox>
-              <Styled.SubTitleText>도로접면</Styled.SubTitleText>
-              <Styled.FeatureText>{data?.detail?.road_side}</Styled.FeatureText>
-            </Styled.FeatureBox>
-            <Styled.FeatureBox>
-              <Styled.SubTitleText>공시지가</Styled.SubTitleText>
-              <Styled.FeatureText>
-                {Math.floor(data?.detail?.official_price).toLocaleString('ko-KR')}원
-              </Styled.FeatureText>
-            </Styled.FeatureBox>
-          </Styled.FeatureRow>
-          <Styled.FeatureRow>
-            <Styled.FeatureBox>
-              <Styled.SubTitleText>토지 이용 계획</Styled.SubTitleText>
-              <Styled.FeatureText>{data?.detail?.use_plan.replaceAll('/', ', ')}</Styled.FeatureText>
-            </Styled.FeatureBox>
-          </Styled.FeatureRow>
-          <Styled.DivLine />
-          {/* 토지 매매 내역 리스트 */}
-          <Styled.TitleText>토지 실거래 내역</Styled.TitleText>
-          {data?.land_trade_list.length === 0 ? (
-            <Styled.FeatureText style={{ marginTop: '80px', width: '450px', fontSize: '15px', textAlign: 'center' }}>
-              주변 지역의 실거래 내역이 없습니다.
-            </Styled.FeatureText>
-          ) : (
-            <Styled.DealList>
-              <thead>
-                <tr>
-                  <Styled.DealListTH style={{ width: '80px' }}>거래일자</Styled.DealListTH>
-                  <Styled.DealListTH>거래유형</Styled.DealListTH>
-                  <Styled.DealListTH>거래금액 (원)</Styled.DealListTH>
-                  <Styled.DealListTH>거래면적 (㎥)</Styled.DealListTH>
-                  <Styled.DealListTH>단가</Styled.DealListTH>
-                </tr>
-              </thead>
-              <tbody>
-                {data?.land_trade_list.map((deal, index) => {
-                  return (
-                    <tr key={index}>
-                      <Styled.DealListTD>{deal.deal_year + deal.deal_month.padStart(2, '0')}</Styled.DealListTD>
-                      <Styled.DealListTD>{deal.deal_type}</Styled.DealListTD>
-                      <Styled.DealListTD>
-                        {Math.floor(deal.land_real_price).toLocaleString('ko-KR')}원
-                      </Styled.DealListTD>
-                      <Styled.DealListTD>{Math.floor(deal.deal_area).toLocaleString('ko-KR')}m²</Styled.DealListTD>
-                      <Styled.DealListTD>
-                        {parseInt(deal.land_real_price / deal.deal_area).toLocaleString('ko-KR') + '원/m²'}
-                      </Styled.DealListTD>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </Styled.DealList>
-          )}
+          <LandDetail data={data} />
           <div style={{ marginBottom: '150px' }} />
         </Styled.Content>
       </Styled.Container>
@@ -287,4 +218,4 @@ const LandDetail = ({ data }) => {
   }
 };
 
-export default LandDetail;
+export default LandInfo;
