@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 
 import { getCadastralMap, getPNU } from '@api/geo';
 import { getListingMarkerList } from '@api/listing';
+import AddressSearchBar from '@components/Home/AddressSearchBar';
 import palette from '@constants/styles';
 import { setCurrentLandAddress } from '@store/actions/land';
 import { MapContainer, MapButton } from '@styles/Home/KakaoMap/KakaoMap.styles';
@@ -328,6 +329,7 @@ const KakaoMap = () => {
 
   return (
     <MapContainer id="map">
+      <AddressSearchBar map={map} />
       <MapButton number={1} onClick={moveToCurrentPosition}>
         <BiCurrentLocation size="28" style={{ marginTop: '2px' }} />
       </MapButton>

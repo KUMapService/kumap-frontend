@@ -19,6 +19,7 @@ export const API = {
     GET_PNU: 'geo/get-pnu',
     AUTO_COMPLETE_ADDRESS: 'geo/auto-complete-address',
     GET_CADASTRAL_MAP: 'geo/get-cadastral-map',
+    GET_ADDRESS_DATA: 'geo/get-address-data',
   },
   LAND: {
     GET_LAND_DATA: 'land/get-land-data',

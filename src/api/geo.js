@@ -63,7 +63,19 @@ export const getCadastralMap = async ({ pnu }) => {
         searchParams: qs.parse(qs.stringify({ pnu: Array.isArray(pnu) ? pnu : [pnu] }, { arrayFormat: 'repeat' })),
       })
       .json();
+    return data;
+  } catch (error) {
+    const message = await error.response
+      ?.json()
+      .then((res) => res?.message)
+      .catch(() => null);
+    throw new Error(message || '응답 실패');
+  }
+};
 
+export const getAddressData = async () => {
+  try {
+    const { data } = await kyInstance.get(API.GEO.GET_ADDRESS_DATA).json();
     return data;
   } catch (error) {
     const message = await error.response
