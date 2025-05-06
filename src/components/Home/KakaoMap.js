@@ -250,7 +250,7 @@ const KakaoMap = () => {
 
       let badge = document.createElement('div');
       badge.className = 'listing-badge';
-      badge.textContent = '경매';
+      badge.textContent = '매물';
 
       let info = document.createElement('div');
       info.className = 'listing-info';
