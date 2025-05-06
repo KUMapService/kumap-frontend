@@ -131,6 +131,14 @@ const LandInfo = ({ data }) => {
     }
   };
 
+  const handleRegisterButton = (data) => {
+    if (isUserLogin) {
+      modal.landListingCreate({ data: data });
+    } else {
+      toast.error('먼저 로그인을 해주세요.');
+    }
+  };
+
   const handleLandReport = (data) => {
     modal.landReport({ data: data });
   };
@@ -160,7 +168,7 @@ const LandInfo = ({ data }) => {
             )}
           </Styled.LikeButton>
           <Styled.RegisterButton
-            onClick={() => modal.landListingCreate({ data: data })}
+            onClick={() => handleRegisterButton(data)}
             disabled={data?.listing === null ? false : true}
             style={
               data?.listing === null
