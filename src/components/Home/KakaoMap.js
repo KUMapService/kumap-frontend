@@ -86,7 +86,7 @@ const KakaoMap = () => {
     });
 
     // 현재 토지 마커 표시
-    if (!isAlreadyMarkerExist || !isShowListingMarker) {
+    if ((!isAlreadyMarkerExist || !isShowListingMarker) && (!currentLandAddress?.pnu) in listingMarker) {
       const latlng = new kakao.maps.LatLng(currentLandAddress?.lat, currentLandAddress?.lng);
       var content = '';
       if (!currentLandAddress?.address?.eupmyeondong) {
