@@ -13,6 +13,7 @@ export const API = {
     CHANGE_PASSWORD: 'user/change-password',
     LAND_LIKE: 'user/change-land-like',
     GET_FAVORITE_LAND: 'user/get-favorite-lands-by-user',
+    GET_LISTINGS: 'user/get-listings',
   },
   GEO: {
     GET_PNU: 'geo/get-pnu',
@@ -23,5 +24,11 @@ export const API = {
     GET_LAND_DATA: 'land/get-land-data',
     GET_LAND_PREDICTED_PRICE: 'land/get-land-predicted-price',
     GET_LAND_REPORT: 'land/get-land-report',
+  },
+  LISTING: {
+    GET_LISTING_DATA: 'listing/get-listing',
+    GET_LISTING_MARKER: 'listing/get-marker',
+    REG_LISTING: 'listing/register-listing',
+    RMV_LISTING: 'listing/remove-listing',
   },
 };

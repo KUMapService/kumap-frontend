@@ -15,7 +15,7 @@ export const patchUserInfo = async ({ image, name, nickname, phone, isImageDelet
   formData.append('name', name);
   formData.append('nickname', nickname);
   formData.append('phone', phone);
-  formData.append('is_image_deleted', isImageDeleted);
+  formData.append('is_image_deleted', isImageDeleted ? 'true' : 'false');
 
   if (image) {
     formData.append('image', image);
@@ -44,7 +44,7 @@ export const patchUserPassword = async ({ currentPassword, changePassword }) => 
     });
 
     const data = await response.json();
-    return { ...data, status: response.status };
+    return { ...data };
   } catch (error) {
     const detail = await error.response?.json();
     throw new Error(detail?.message || '응답 실패');
@@ -56,9 +56,8 @@ export const patchLikeStatus = async ({ pnu }) => {
     const response = await authKy.post(API.USER.LAND_LIKE, {
       json: { pnu },
     });
-
     const data = await response.json();
-    return { ...data, status: response.status };
+    return { ...data };
   } catch (error) {
     const detail = await error.response?.json();
     throw new Error(detail?.message || '응답 실패');
@@ -68,9 +67,19 @@ export const patchLikeStatus = async ({ pnu }) => {
 export const getFavoriteLand = async () => {
   try {
     const response = await authKy.get(API.USER.GET_FAVORITE_LAND);
-
     const data = await response.json();
-    return { ...data, status: response.status };
+    return { ...data };
+  } catch (error) {
+    const detail = await error.response?.json();
+    throw new Error(detail?.message || '응답 실패');
+  }
+};
+
+export const getUserListingList = async () => {
+  try {
+    const response = await authKy.get(API.USER.GET_LISTINGS);
+    const data = await response.json();
+    return { ...data };
   } catch (error) {
     const detail = await error.response?.json();
     throw new Error(detail?.message || '응답 실패');

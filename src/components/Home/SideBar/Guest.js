@@ -8,7 +8,7 @@ function Guest() {
     <>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Styled.LoginButton onClick={() => navigate('/login')}>로그인</Styled.LoginButton>
-        <Styled.RegisterButton onClick={() => navigate('/register')}>회원가입</Styled.RegisterButton>
+        <Styled.RegisterButton onClick={() => navigate('/sign-up')}>회원가입</Styled.RegisterButton>
       </div>
       <Styled.BottomPanel>
         <Styled.CategoryText>문의</Styled.CategoryText>

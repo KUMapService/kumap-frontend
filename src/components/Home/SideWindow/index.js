@@ -4,8 +4,9 @@ import { toast } from 'react-toastify';
 import { getLandData } from '@api/land';
 import DisplayAds from '@components/DisplayAds';
 import * as Styled from '@styles/Home/SideWindow.styles';
-import LandDetail from './LandDetail';
-import { getLandPredictPrice } from 'api/land';
+import LandInfo from '@components/Home/SideWindow/LandInfo';
+import ListingList from '@components/Home/SideWindow/ListingList';
+import { getLandPredictPrice } from '@api/land';
 
 const SideWindow = () => {
   const currentLandAddress = useSelector((state) => state.land.currentLandAddress);
@@ -17,10 +18,10 @@ const SideWindow = () => {
     const fetchData = async () => {
       try {
         const data = await getLandData({ pnu: currentLandAddress?.pnu });
-        console.log(data);
         setLandData({
           ...data,
         });
+        setPage('land-detail');
       } catch (error) {
         toast.error(error);
       }
@@ -61,7 +62,10 @@ const SideWindow = () => {
           매물 목록
         </Styled.TopButton>
       </Styled.TopMenu>
-      <Styled.Content>{page === 'land-detail' && <LandDetail data={landData} />}</Styled.Content>
+      <Styled.Content>
+        {page === 'land-detail' && <LandInfo data={landData} />}
+        {page === 'listings' && <ListingList />}
+      </Styled.Content>
       <Styled.Footer style={{ height: '100px' }}>
         {/* 구글 디스플레이 광고 삽입 */}
         <DisplayAds />

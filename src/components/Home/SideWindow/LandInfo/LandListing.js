@@ -11,12 +11,11 @@ const LandListing = ({ data }) => {
   } else {
     return (
       <>
-        <PStyled.DivLine style={{ marginBottom: '0px' }} />
-        <PStyled.TitleText>매물 정보</PStyled.TitleText>
+        <PStyled.DivLine />
         <Styled.Row>
           <Styled.InfoBox>
             <Styled.Label>
-              <FaCalendarAlt color={palette.black500} /> 등록일자
+              <FaCalendarAlt color={palette.black500} /> 매물 등록일자
             </Styled.Label>
             <Styled.Value>{new Date(data?.listing?.reg_date).toLocaleDateString('ko-KR')}</Styled.Value>
           </Styled.InfoBox>

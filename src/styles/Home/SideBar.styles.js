@@ -245,14 +245,14 @@ export const LandNavigateButton = styled.button`
   width: 100%;
   text-align: left;
   font-size: 12px;
-  color: ${palette.black300};
+  color: ${palette.gray700};
   cursor: pointer;
 `;
 
 export const LandNavigateText = styled.span`
   text-align: left;
   font-size: 12px;
-  color: ${palette.black300};
+  color: ${palette.gray700};
 `;
 
 export const LandNavigateHighlightText = styled.span`

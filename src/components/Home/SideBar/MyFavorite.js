@@ -12,6 +12,7 @@ function MyFavorite({ myFavoriteLandList, setCurrentPage, fetchFavoriteData }) {
   const dispatch = useDispatch();
 
   const checkLandType = (land) => {
+    console.log(land);
     if (land.auction !== null) {
       return '경매';
     } else if (land.listing !== null) {
@@ -55,7 +56,7 @@ function MyFavorite({ myFavoriteLandList, setCurrentPage, fetchFavoriteData }) {
                 <br />
               </Styled.LandNavigateText>
               <Styled.LandNavigateHighlightText>
-                예측가: {numberFormat(favorite?.detail?.area * favorite?.detail?.predict_price)}
+                예측가: {numberFormat(favorite?.detail?.land_area * favorite?.predicted_price)}
               </Styled.LandNavigateHighlightText>
               {checkLandType(favorite) === '경매' && (
                 <Styled.LandNavigateHighlightText style={{ color: palette.blue500 }}>
@@ -66,7 +67,7 @@ function MyFavorite({ myFavoriteLandList, setCurrentPage, fetchFavoriteData }) {
               {checkLandType(favorite) === '매물' && (
                 <Styled.LandNavigateHighlightText style={{ color: palette.blue500 }}>
                   <br />
-                  매매가: {numberFormat(favorite.sale_data.land_price)}원
+                  매매가: {numberFormat(favorite?.listing?.price)}원
                 </Styled.LandNavigateHighlightText>
               )}
             </Styled.LandNavigateButton>

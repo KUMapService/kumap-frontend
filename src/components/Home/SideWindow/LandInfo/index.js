@@ -25,11 +25,13 @@ const LandInfo = ({ data }) => {
   const [isLoading, setLoading] = useState(true);
   const [highValueLand, setHighValueLand] = useState(false);
   const [isLandLike, setLandLike] = useState(false);
+  const [landLikeCount, setLandLikeCount] = useState(0);
   const [isRoadView, setRoadView] = useState(false);
   const latestData = useRef(null);
   const modal = useModal();
 
   useEffect(() => {
+    // 사이드 윈도우 지도 지적도 데이터 전달 함수
     const setSideWindowCadastral = (pnu) => {
       const interval = setInterval(async () => {
         const iframe = document.getElementsByClassName('side-window-map')[0];
@@ -68,6 +70,11 @@ const LandInfo = ({ data }) => {
   }, []);
 
   useEffect(() => {
+    // 좋아요 동기화
+    if (data) {
+      setLandLike(data.is_like);
+      setLandLikeCount(data.like_count);
+    }
     latestData.current = data;
   }, [data]);
 
@@ -98,7 +105,8 @@ const LandInfo = ({ data }) => {
     try {
       const response = await patchLikeStatus({ pnu: data?.pnu });
       toast.success(response.message);
-      setLandLike(response.like);
+      setLandLike(response.data);
+      setLandLikeCount(response.data === true ? landLikeCount + 1 : landLikeCount - 1);
     } catch (error) {
       toast.error(error.message);
     }
@@ -162,7 +170,7 @@ const LandInfo = ({ data }) => {
           >
             {data?.listing === null ? '매물 등록' : data?.listing?.nickname + '님의 토지'}
           </Styled.RegisterButton>
-          <Styled.LikeCountText>{data?.like_count}명이 이 토지를 좋아합니다.</Styled.LikeCountText>
+          <Styled.LikeCountText>{landLikeCount}명이 이 토지를 좋아합니다.</Styled.LikeCountText>
           {/* 경매일 경우 타경 표시 */}
           {/* {bidData !== null && (
 					<Styled.BidCaseCdTxt>

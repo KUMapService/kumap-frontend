@@ -5,7 +5,7 @@ function User({ setCurrentPage }) {
     <Styled.BottomPanel>
       <Styled.CategoryText>마이페이지</Styled.CategoryText>
       <Styled.CategoryButton onClick={() => setCurrentPage('myFavorite')}>나의 관심 목록</Styled.CategoryButton>
-      <Styled.CategoryButton onClick={() => setCurrentPage('mySales')}>나의 매물</Styled.CategoryButton>
+      <Styled.CategoryButton onClick={() => setCurrentPage('myListings')}>나의 매물</Styled.CategoryButton>
       <br />
       <br />
       <Styled.CategoryText>문의</Styled.CategoryText>

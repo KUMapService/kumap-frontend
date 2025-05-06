@@ -54,7 +54,7 @@
   color: #191919;
 }
 
-.bid-overlay {
+.auction-overlay {
   box-sizing: border-box;
   background-clip: padding-box;
   background-color: #fafafa;
@@ -72,12 +72,12 @@
   z-index: 20;
 }
 
-.bid-overlay:hover {
+.auction-overlay:hover {
   border: 2px solid #343a40;
   z-index: 30;
 }
 
-.bid-overlay:after {
+.auction-overlay:after {
   border-top: 15px solid #fafafa;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
@@ -88,7 +88,7 @@
   left: calc(50% - 5px);
 }
 
-.bid-overlay-animation {
+.auction-overlay-animation {
   box-sizing: border-box;
   background-clip: padding-box;
   background-color: #fafafa;
@@ -109,7 +109,7 @@
   margin-top: 0;
 }
 
-.bid-overlay-animation:after {
+.auction-overlay-animation:after {
   border-top: 15px solid #fafafa;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
@@ -129,13 +129,13 @@
   }
 }
 
-.bid-block {
+.auction-block {
   background-color: #ff7d7d;
   width: auto;
   height: 30px;
 }
 
-.bid-title {
+.auction-title {
   display: block;
   text-align: center;
   padding: 5px 15px;
@@ -145,7 +145,7 @@
   color: #fafafa;
 }
 
-.bid-price {
+.auction-price {
   display: block;
   text-align: center;
   padding-top: 5px;
@@ -157,7 +157,7 @@
   color: #191919;
 }
 
-.bid-area {
+.auction-area {
   display: block;
   text-align: center;
   padding-left: 5px;
@@ -169,78 +169,81 @@
   color: #767676;
 }
 
-.sale-overlay {
-  box-sizing: border-box;
-  background-clip: padding-box;
-  background-color: #fafafa;
-  filter: drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.2));
-  border: 2px solid rgba(0, 0, 0, 0);
-  border-radius: 4px;
+.listing-overlay {
+  display: flex;
+  align-items: center;
+  background-color: #f4f6f7;
+  border: 2px solid #dbe1e5;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 6px 8px 6px 4px;
+  transition: all 0.2s ease-in-out;
   position: relative;
-  width: auto;
-  height: auto;
-
-  padding: 0;
-  bottom: 80px;
-
-  cursor: pointer;
+  bottom: 56px;
   z-index: 20;
 }
 
-.sale-overlay:hover {
-  border: 2px solid #343a40;
-  z-index: 30;
+.listing-overlay.active {
+  border: 2px solid #0067a3;
+  background-color: #e0f9fc;
+  z-index: 999;
 }
 
-.sale-overlay:after {
-  border-top: 15px solid #fafafa;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 0px solid transparent;
+.listing-overlay:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+  border-color: #0067a3;
+}
+
+.listing-overlay:after {
   content: '';
   position: absolute;
-  bottom: -10px;
-  left: calc(50% - 5px);
+  bottom: -12px;
+  left: calc(50% - 8px);
+  border-top: 15px solid #f4f6f7;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
 }
 
-.sale-block {
+.listing-overlay.active:after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: calc(50% - 8px);
+  border-top: 15px solid #e0f9fc;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+}
+
+.listing-badge {
   background-color: #0067a3;
-  width: auto;
-  height: 30px;
-}
-
-.sale-title {
-  display: block;
-  text-align: center;
-  padding: 5px 15px;
-  font-family: 'SC Dream 4';
-  font-weight: normal;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 14px;
-  color: #fafafa;
+  color: white;
+  font-weight: bold;
+  margin-right: 8px;
 }
 
-.sale-price {
-  display: block;
-  text-align: center;
-  padding-top: 5px;
-  padding-left: 5px;
-  padding-right: 5px;
-  font-family: 'SC Dream 4';
-  font-weight: normal;
-  font-size: 14px;
-  color: #191919;
+.listing-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
-.sale-area {
-  display: block;
-  text-align: center;
-  padding-left: 5px;
-  padding-right: 5px;
-  padding-bottom: 5px;
-  font-family: 'SC Dream 4';
-  font-weight: normal;
-  font-size: 8px;
-  color: #767676;
+.listing-price {
+  font-size: 15px;
+  font-weight: bold;
+  color: #0067a3;
+}
+
+.listing-area {
+  font-size: 12px;
+  color: #6b7280;
 }
 
 .region-overlay {

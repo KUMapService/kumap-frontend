@@ -4,14 +4,14 @@ import { toast } from 'react-toastify';
 import { BsFillPersonBadgeFill } from 'react-icons/bs';
 import { LuMenu } from 'react-icons/lu';
 import { IoCloseOutline } from 'react-icons/io5';
-import { getFavoriteLand } from '@api/user';
+import { getFavoriteLand, getUserListingList } from '@api/user';
 import palette from '@constants/styles';
 import { useModal } from '@providers/ModalProvider';
 import * as Styled from '@styles/Home/SideBar.styles';
 import Guest from './Guest';
 import User from './User';
 import MyFavorite from './MyFavorite';
-import MySales from './MySales';
+import MyListings from './MyListings';
 
 function SideBar({ width = 320 }) {
   const isUserLogin = useSelector((state) => state.auth.isUserLogin);
@@ -20,19 +20,26 @@ function SideBar({ width = 320 }) {
   const side = useRef();
   const [currentPage, setCurrentPage] = useState('main');
   const [myFavoriteLandList, setMyFavoriteLandList] = useState([]);
+  const [myListingList, setMyListingList] = useState([]);
   const modal = useModal();
 
   useEffect(() => {
     if (isUserLogin) {
       // TODO: 관심목록 받아오기
       fetchFavoriteData();
+      fetchListingData();
       setMyFavoriteLandList([]);
     }
   }, [isUserLogin]);
 
   const fetchFavoriteData = async () => {
     const response = await getFavoriteLand();
-    setMyFavoriteLandList(response.data.favorites);
+    setMyFavoriteLandList(response.data);
+  };
+
+  const fetchListingData = async () => {
+    const response = await getUserListingList();
+    setMyListingList(response.data);
   };
 
   const toggleMenu = () => {
@@ -94,7 +101,13 @@ function SideBar({ width = 320 }) {
                   fetchFavoriteData={fetchFavoriteData}
                 />
               )}
-              {currentPage === 'mySales' && <MySales setCurrentPage={setCurrentPage} />}
+              {currentPage === 'myListings' && (
+                <MyListings
+                  myListingList={myListingList}
+                  setCurrentPage={setCurrentPage}
+                  fetchListingData={fetchListingData}
+                />
+              )}
             </>
           )}
         </>
