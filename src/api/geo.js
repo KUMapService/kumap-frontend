@@ -60,7 +60,7 @@ export const getCadastralMap = async ({ pnu }) => {
   try {
     const { data } = await kyInstance
       .get(API.GEO.GET_CADASTRAL_MAP, {
-        searchParams: qs.parse(qs.stringify({ pnu: Array.isArray(pnu) ? pnu : [pnu] }, { arrayFormat: 'repeat' })),
+        searchParams: qs.stringify({ pnu: Array.isArray(pnu) ? pnu : [pnu] }, { arrayFormat: 'repeat' }),
       })
       .json();
     return data;

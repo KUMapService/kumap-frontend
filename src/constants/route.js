@@ -32,4 +32,7 @@ export const API = {
     REG_LISTING: 'listing/register-listing',
     RMV_LISTING: 'listing/remove-listing',
   },
+  REGION: {
+    GET_REGION_MARKERS: 'region/get-region_markers',
+  },
 };

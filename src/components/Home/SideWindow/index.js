@@ -1,32 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { getLandData } from '@api/land';
+
+import { getLandData, getLandPredictPrice } from '@api/land';
 import DisplayAds from '@components/DisplayAds';
-import * as Styled from '@styles/Home/SideWindow.styles';
 import LandInfo from '@components/Home/SideWindow/LandInfo';
 import ListingList from '@components/Home/SideWindow/ListingList';
-import { getLandPredictPrice } from '@api/land';
+import * as Styled from '@styles/Home/SideWindow.styles';
+import ClustererInfo from './ClustererInfo';
+//import RegionInfo from './RegionInfo';
 
 const SideWindow = () => {
   const currentLandAddress = useSelector((state) => state.land.currentLandAddress);
   const [page, setPage] = useState('land-detail');
+  const [subPage, setSubPage] = useState('land-info');
   const [landData, setLandData] = useState(null);
+  //const [regionData, setRegionData] = useState(null);
 
   useEffect(() => {
     if (!currentLandAddress) return;
-    const fetchData = async () => {
+    const fetchLandData = async () => {
       try {
         const data = await getLandData({ pnu: currentLandAddress?.pnu });
         setLandData({
           ...data,
         });
-        setPage('land-detail');
       } catch (error) {
         toast.error(error);
       }
     };
-    fetchData();
+    if (currentLandAddress.pnu.length === 19) {
+      fetchLandData();
+      setSubPage('land-info');
+    } else if (Array.isArray(currentLandAddress.pnu)) {
+      setSubPage('clusterer-info');
+      console.log(currentLandAddress);
+    } else {
+      setSubPage('region-info');
+    }
+    setPage('land-detail');
   }, [currentLandAddress]);
 
   useEffect(() => {
@@ -63,7 +75,9 @@ const SideWindow = () => {
         </Styled.TopButton>
       </Styled.TopMenu>
       <Styled.Content>
-        {page === 'land-detail' && <LandInfo data={landData} />}
+        {page === 'land-detail' && subPage === 'land-info' && <LandInfo data={landData} />}
+        {page === 'land-detail' && subPage === 'region-info' && 'hi'}
+        {page === 'land-detail' && subPage === 'clusterer-info' && <ClustererInfo />}
         {page === 'listings' && <ListingList />}
       </Styled.Content>
       <Styled.Footer style={{ height: '100px' }}>

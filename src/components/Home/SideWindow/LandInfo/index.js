@@ -176,7 +176,7 @@ const LandInfo = ({ data }) => {
                 : { backgroundColor: palette.gray500, color: palette.white500 }
             }
           >
-            {data?.listing === null ? '매물 등록' : data?.listing?.nickname + '님의 토지'}
+            {data?.listing === null ? '소유주 등록' : data?.listing?.nickname + '님의 토지'}
           </Styled.RegisterButton>
           <Styled.LikeCountText>{landLikeCount}명이 이 토지를 좋아합니다.</Styled.LikeCountText>
           {/* 경매일 경우 타경 표시 */}
